@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MafiCo.Domain", "MafiCo.Domain\MafiCo.Domain.csproj", "{A7B2D913-5275-47AB-8E81-97485512DD9B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MafiCo.Application", "MafiCo.Application\MafiCo.Application.csproj", "{45CDE9F1-B6C1-413E-8BD2-F47E93FE57A5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MafiCo.Console", "MafiCo.Console\MafiCo.Console.csproj", "{CCB25345-9E12-4EF0-A667-7CDC63BD8C85}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A7B2D913-5275-47AB-8E81-97485512DD9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7B2D913-5275-47AB-8E81-97485512DD9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7B2D913-5275-47AB-8E81-97485512DD9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7B2D913-5275-47AB-8E81-97485512DD9B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45CDE9F1-B6C1-413E-8BD2-F47E93FE57A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45CDE9F1-B6C1-413E-8BD2-F47E93FE57A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45CDE9F1-B6C1-413E-8BD2-F47E93FE57A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45CDE9F1-B6C1-413E-8BD2-F47E93FE57A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCB25345-9E12-4EF0-A667-7CDC63BD8C85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCB25345-9E12-4EF0-A667-7CDC63BD8C85}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCB25345-9E12-4EF0-A667-7CDC63BD8C85}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCB25345-9E12-4EF0-A667-7CDC63BD8C85}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
