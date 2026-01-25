@@ -11,6 +11,6 @@ public class MenuHandler {
     }
     
     public string ShowMainMenu() {
-        return _output.WaitChoice("MafiCo", ["Начать", "Выйти"]);
+        return _output.WaitChoice("MafiCo", ["Начать", "Настроить игроков",  "Выйти"]);
     }
 }

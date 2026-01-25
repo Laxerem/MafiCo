@@ -1,4 +1,5 @@
 using MafiCo.Application;
+using MafiCo.Application.Database;
 using MafiCo.Application.Orchestrators;
 using MafiCo.Domain.Entities;
 
@@ -16,7 +17,7 @@ public class App {
             var input = menu.ShowMainMenu();
             switch (input) {
                 case "Начать":
-                    var orchestrator = new GameOrchestrator(new Game(), _output);
+                    var orchestrator = new GameOrchestrator(new Game(), new GameMemory("../../../memory.db"), _output);
                     await orchestrator.SetupGameAsync();
                     break;
                 case "Выйти":

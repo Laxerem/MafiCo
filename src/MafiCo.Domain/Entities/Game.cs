@@ -1,9 +1,12 @@
+using MafiCo.Domain.Abstractions;
+using MafiCo.Domain.Exceptions;
 using MafiCo.Domain.ValueObjects;
 
 namespace MafiCo.Domain.Entities;
 
 public class Game {
     private List<Player> _players;
+    private DayPhase _currentPhase;
 
     public Game() {
         _players = new List<Player>();
@@ -14,6 +17,9 @@ public class Game {
     }
 
     public void Start() {
-        Console.WriteLine("Game started");
+        if (_players.Count <= 2) {
+            throw new GameException("Для игры недостаточно игроков");
+        }
+        
     }
 }
