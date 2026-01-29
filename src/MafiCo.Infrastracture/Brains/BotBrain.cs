@@ -1,4 +1,5 @@
 using MafiCo.Application.Interfaces;
+using MafiCo.Domain.ValueObjects;
 
 namespace MafiCo.Infrastracture.Brains;
 
@@ -13,6 +14,10 @@ public class BotBrain : IPlayerBrain {
     }
     
     public async Task<string> ChooseTargetAsync() {
+        throw new NotImplementedException();
+    }
+
+    public Task InformAboutRole(Role role) {
         throw new NotImplementedException();
     }
 }

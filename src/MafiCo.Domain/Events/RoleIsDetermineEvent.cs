@@ -3,4 +3,4 @@ using MafiCo.Domain.ValueObjects;
 
 namespace MafiCo.Domain.Events;
 
-public record DayPhaseChangedEvent(DayPhase NewPhase) : IGameEvent;
+public record RoleIsDetermineEvent(string username, Role Role) : IGameEvent;

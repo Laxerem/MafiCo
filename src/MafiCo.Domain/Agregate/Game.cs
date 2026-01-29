@@ -1,5 +1,6 @@
 using MafiCo.Domain.Abstractions;
 using MafiCo.Domain.Entities;
+using MafiCo.Domain.Events;
 using MafiCo.Domain.Exceptions;
 using MafiCo.Domain.ValueObjects;
 
@@ -42,10 +43,13 @@ public class Game {
         }
     }
     
-    public async Task StartAsync(List<string> players) {
+    public IEnumerable<RoleIsDetermineEvent> SetupGame(List<string> players) {
         if (players.Count <= 2) {
             throw new GameException("Для игры недостаточно игроков");
         }
         this.DetermineRoles(players);
+
+        var result = _players.Select(x => new RoleIsDetermineEvent(x.Key, x.Value.Role));
+        return result;
     }
 }

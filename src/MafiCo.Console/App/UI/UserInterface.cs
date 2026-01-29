@@ -21,16 +21,24 @@ public class UserInterface {
     }
 
     public async Task StartRetention() {
-        while (true) {
-            var choice = await ShowMenu();
-            switch (choice) {
-                case GameStartEvent:
-                    await _gameService.SetupGameAsync();
-                    break;
-                case GameClosedEvent:
-                    AnsiConsole.WriteLine("Мафия не ждёт....");
-                    return;
+        try {
+            while (true) {
+                var choice = await ShowMenu();
+                switch (choice) {
+                    case GameStartEvent:
+                        await _gameService.StartGameAsync();
+                        break;
+                    case GameClosedEvent:
+                        AnsiConsole.WriteLine("Мафия не ждёт....");
+                        return;
+                }
             }
+        }
+        catch (GameException e) {
+            AnsiConsole.WriteException(e);
+            await Task.Delay(3000);
+            AnsiConsole.Clear();
+            await StartRetention();
         }
     }
 
