@@ -1,0 +1,18 @@
+{
+  "User": {
+    "Username": "Laxerem"
+  },
+  "Bots": [
+    {
+      "Username": "Grok",
+      "ModelName": "",
+      "SystemPrompt": ""
+    },
+    {
+      "Username": "ChatGpt",
+      "ModelName": "",
+      "SystemPrompt": ""
+    }
+  ],
+  "BasePrompt": ""
+}
