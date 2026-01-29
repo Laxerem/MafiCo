@@ -29,7 +29,7 @@ public class App {
         players.Add(user);
         
         var gameService = new GameService(players);
-        var ui = new UserInterface(gameService);
+        var ui = new UserInterface(gameService, user.Item2);
         await ui.StartRetention();
     }
 }

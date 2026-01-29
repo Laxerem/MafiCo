@@ -1,10 +1,12 @@
 using MafiCo.Application.Interfaces;
+using MafiCo.Domain.Events;
+using MafiCo.Domain.Interfaces;
 using MafiCo.Domain.ValueObjects;
 
 namespace MafiCo.Infrastracture.Brains;
 
 public class HumanBrain : IPlayerBrain {
-    public Action<> Actions;
+    public event Func<IGameEvent, Task> Actions;
     
     public HumanBrain() {
         
@@ -14,7 +16,7 @@ public class HumanBrain : IPlayerBrain {
         throw new NotImplementedException();
     }
 
-    public Task InformAboutRole(Role role) {
-        return Task.CompletedTask;
+    public async Task InformAboutRole(Role role) {
+        await Actions.Invoke(new RoleIsDetermineEvent("", role));
     }
 }

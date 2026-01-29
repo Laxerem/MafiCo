@@ -18,6 +18,6 @@ public class BotBrain : IPlayerBrain {
     }
 
     public Task InformAboutRole(Role role) {
-        throw new NotImplementedException();
+        return Task.CompletedTask;
     }
 }

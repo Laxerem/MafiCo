@@ -13,13 +13,11 @@ public class GameService {
         _game = new Game();
         _brains = brains.ToDictionary(x => x.name, p => p.brain);
     }
-
-    public async Task SetupGameAsync() {
-        var determineRoleEvents = _game.SetupGame(_brains.Keys.ToList());
-        
-    }
     
     public async Task StartGameAsync() {
-        
+        var determineRoleEvents = _game.SetupGame(_brains.Keys.ToList());
+        foreach (var evt in determineRoleEvents) {
+            await _brains[evt.username].InformAboutRole(evt.Role);
+        }
     }
 }
