@@ -9,17 +9,19 @@ using MafiCo.Domain.Exceptions;
 using MafiCo.Infrastracture.Brains;
 using MafiCo.Infrastracture.Clients;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Spectre.Console;
 
 namespace MafiCo.Console.App;
 
-public class App {
+public class App : BackgroundService {
     private readonly AppConfig _config;
-    public App(AppConfig config) {
-        _config = config;
+    public App(IOptions<AppConfig> config) {
+        _config = config.Value;
     }
 
-    public async Task RunAsync() {
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken) {
         var openRouterClient = new OpenRouterClient(new HttpClient(), _config.Environment.ApiToken);
         var bots = _config.Bots.Select(bot => (bot.Username,(IPlayerBrain) new BotBrain(openRouterClient, bot.SystemPrompt, bot.ModelName)));
         var user = (_config.User.Username, new HumanBrain());

@@ -2,11 +2,14 @@ using MafiCo.Domain.Abstractions;
 using MafiCo.Domain.Entities;
 using MafiCo.Domain.Events;
 using MafiCo.Domain.Exceptions;
+using MafiCo.Domain.Interfaces;
 using MafiCo.Domain.ValueObjects;
 
 namespace MafiCo.Domain.Agregate;
 
 public class Game {
+    public List<IDomainEvent> Events = new List<IDomainEvent>();
+    
     private Dictionary<string, Player> _players;
     private DayPhase _currentPhase;
     private Chat _chat;
@@ -31,17 +34,28 @@ public class Game {
 
             if (i < mafiaCount) {
                 player = new Mafia(name, Role.Mafia);
+                Events.Add(new RoleDeterminateEvent(player.Name, Role.Mafia));
             } else {
                 player = new Citizen(name, Role.Citizen);
+                Events.Add(new RoleDeterminateEvent(player.Name, Role.Citizen));
             }
-
+            
             _players[name] = player;
         }
     }
 
-    private void ProcessDayPhase() {
+    private async Task<string?> StartVoting() {
+        throw new NotImplementedException();
+    }
+
+    private async Task ProcessDayPhase() {
+        Console.WriteLine("Processing Day Phase");
         if (_currentPhase == DayPhase.Day) {
-            
+            var playerName = await StartVoting();
+            if (playerName != null) {
+                var player = _players[playerName];
+                player.Kill();
+            }
         }
     }
     

@@ -8,14 +8,12 @@ using Spectre.Console;
 namespace MafiCo.Console.App.UI.Windows;
 
 public class MenuWindow : UiWindow {
-    public override event Action<UiWindow> OnSwitchWindow;
-    protected override event Action<UiEvent> OnEvent;
-
     public override async Task Show() {
-        var choice = await WaitChoice("MafiCo", ["Играть", "Выйти"]);
+        AnsiConsole.Console.Write(new FigletText("MafiCo"));
+        var choice = await WaitChoice("", ["Играть", "Выйти"]);
         switch (choice) {
             case "Играть":
-                OnSwitchWindow?.Invoke(new StartGameWindow());
+                SwitchTo<StartGameWindow>();
                 break;
             case "Выйти":
                 throw new GameClosedException("Мафия не ждёт...");

@@ -4,6 +4,7 @@ using MafiCo.Console.App.Exceptions;
 using MafiCo.Console.App.UI.Common;
 using MafiCo.Console.App.UI.Events;
 using MafiCo.Console.App.UI.Windows;
+using MafiCo.Console.App.UI.Windows.Game;
 using MafiCo.Domain.Events;
 using MafiCo.Domain.Exceptions;
 using MafiCo.Domain.Interfaces;
@@ -25,28 +26,15 @@ public class UserInterface {
         _currentWindow.OnSwitchWindow += ChangeWindow;
     }
 
-    private void ChangeWindow(UiWindow window) {
-        _currentWindow = window;
-    }
-
-    private async Task ProcessEvent(IDomainEvent domainEvent) {
-        AnsiConsole.Clear();
-        switch (domainEvent) {
-            case RoleDeterminateEvent:
-                var evt = domainEvent as RoleDeterminateEvent;
-                if (evt.Role is Role.Citizen) {
-                    AnsiConsole.MarkupLine($"Твоя роль:[green] {evt.Role}[/]");   
-                }
-                else {
-                    AnsiConsole.MarkupLine($"Твоя роль:[red] {evt.Role}[/]");  
-                }
-                await Task.Delay(4000);
-                AnsiConsole.Clear();
-                break;
-        }
+    private void ChangeWindow(SwitchWindowEvent @event) {
+        _currentWindow = @event.WindowType switch {
+            var t when t == typeof(StartGameWindow) => new StartGameWindow(_gameService),
+            _ => throw new Exception("Invalid window type")
+        };
     }
 
     public async Task StartRetention() {
+        AnsiConsole.Console.Clear();
         try {
             while (true) {
                 await _currentWindow.Show();

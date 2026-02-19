@@ -12,6 +12,10 @@ public class HumanBrain : IPlayerBrain {
         
     }
 
+    public void InformAboutRole(Role role) {
+        Console.WriteLine($"ИГРОК: Я {role.ToString()}");
+    }
+
     public Task<string> ChooseTargetAsync() {
         throw new NotImplementedException();
     }

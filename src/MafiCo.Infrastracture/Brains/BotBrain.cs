@@ -17,7 +17,11 @@ public class BotBrain : IPlayerBrain {
         _modelName = modelName;
         _contextBuilder.AppendLine(_systemPrompt);
     }
-    
+
+    public void InformAboutRole(Role role) {
+        Console.WriteLine($"{_modelName}: Я {role.ToString()}");
+    }
+
     public async Task<string> ChooseTargetAsync() {
         throw new NotImplementedException();
     }

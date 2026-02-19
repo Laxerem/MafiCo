@@ -1,6 +1,7 @@
 using MafiCo.Application.Interfaces;
 using MafiCo.Domain.Agregate;
 using MafiCo.Domain.Entities;
+using MafiCo.Domain.Events;
 using MafiCo.Domain.ValueObjects;
 
 namespace MafiCo.Application.Services;
@@ -16,5 +17,10 @@ public class GameService {
     
     public async Task StartGameAsync() {
         _game.SetupGame(_brains.Keys.ToList());
+        var events = _game.Events.Where(x => x is RoleDeterminateEvent).ToList();
+        foreach (RoleDeterminateEvent @event in events) {
+            _game.Events.Remove(@event);
+            _brains[@event.PlayerName].InformAboutRole(@event.Role);
+        }
     }
 }

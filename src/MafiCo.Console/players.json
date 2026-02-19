@@ -5,12 +5,12 @@
   "Bots": [
     {
       "Username": "Grok",
-      "ModelName": "",
+      "ModelName": "grok",
       "SystemPrompt": ""
     },
     {
       "Username": "ChatGpt",
-      "ModelName": "",
+      "ModelName": "chatgpt",
       "SystemPrompt": ""
     }
   ],
