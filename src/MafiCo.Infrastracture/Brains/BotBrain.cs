@@ -1,3 +1,4 @@
+using System.Text;
 using MafiCo.Application.Interfaces;
 using MafiCo.Domain.ValueObjects;
 
@@ -8,16 +9,16 @@ public class BotBrain : IPlayerBrain {
     private string _systemPrompt;
     private string _modelName;
     
-    public BotBrain(IOpenRouterClient _client, string systemPrompt, string modelName) {
+    private StringBuilder _contextBuilder = new();
+    
+    public BotBrain(IOpenRouterClient client, string systemPrompt, string modelName) {
+        _client = client;
         _systemPrompt = systemPrompt;
         _modelName = modelName;
+        _contextBuilder.AppendLine(_systemPrompt);
     }
     
     public async Task<string> ChooseTargetAsync() {
         throw new NotImplementedException();
-    }
-
-    public Task InformAboutRole(Role role) {
-        return Task.CompletedTask;
     }
 }

@@ -1,3 +1,3 @@
 namespace MafiCo.Domain.Interfaces;
 
-public interface IGameEvent {}
+public interface IDomainEvent {}

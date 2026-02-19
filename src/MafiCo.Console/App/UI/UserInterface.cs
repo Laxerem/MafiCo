@@ -1,6 +1,9 @@
 using MafiCo.Application.Interfaces;
 using MafiCo.Application.Services;
+using MafiCo.Console.App.Exceptions;
+using MafiCo.Console.App.UI.Common;
 using MafiCo.Console.App.UI.Events;
+using MafiCo.Console.App.UI.Windows;
 using MafiCo.Domain.Events;
 using MafiCo.Domain.Exceptions;
 using MafiCo.Domain.Interfaces;
@@ -13,25 +16,24 @@ namespace MafiCo.Console.App.UI;
 public class UserInterface {
     private readonly GameService _gameService;
     private readonly HumanBrain _viewer;
+    private UiWindow _currentWindow;
     
     public UserInterface(GameService gameService, HumanBrain viewerBrain) {
         _gameService = gameService;
         _viewer = viewerBrain;
-    }
-    
-    private async Task<string> WaitChoice(string title, IEnumerable<string> choices) {
-        var selected = await AnsiConsole.PromptAsync(
-            new SelectionPrompt<string>()
-                .Title(title)
-                .AddChoices(choices));
-        return selected;
+        _currentWindow = new MenuWindow();
+        _currentWindow.OnSwitchWindow += ChangeWindow;
     }
 
-    private async Task ProcessEvent(IGameEvent gameEvent) {
+    private void ChangeWindow(UiWindow window) {
+        _currentWindow = window;
+    }
+
+    private async Task ProcessEvent(IDomainEvent domainEvent) {
         AnsiConsole.Clear();
-        switch (gameEvent) {
-            case RoleIsDetermineEvent:
-                var evt = gameEvent as RoleIsDetermineEvent;
+        switch (domainEvent) {
+            case RoleDeterminateEvent:
+                var evt = domainEvent as RoleDeterminateEvent;
                 if (evt.Role is Role.Citizen) {
                     AnsiConsole.MarkupLine($"Твоя роль:[green] {evt.Role}[/]");   
                 }
@@ -39,6 +41,7 @@ public class UserInterface {
                     AnsiConsole.MarkupLine($"Твоя роль:[red] {evt.Role}[/]");  
                 }
                 await Task.Delay(4000);
+                AnsiConsole.Clear();
                 break;
         }
     }
@@ -46,16 +49,7 @@ public class UserInterface {
     public async Task StartRetention() {
         try {
             while (true) {
-                var choice = await ShowMenu();
-                switch (choice) {
-                    case GameStartEvent:
-                        _viewer.Actions += ProcessEvent;
-                        await _gameService.StartGameAsync();
-                        break;
-                    case GameClosedEvent:
-                        AnsiConsole.WriteLine("Мафия не ждёт....");
-                        return;
-                }
+                await _currentWindow.Show();
             }
         }
         catch (GameException e) {
@@ -64,19 +58,9 @@ public class UserInterface {
             AnsiConsole.Clear();
             await StartRetention();
         }
-    }
-
-    private async Task<UiEvent> ShowMenu() {
-        var choice = await WaitChoice("MafiCo", ["Играть", "Выйти"]);
-        switch (choice) {
-            case "Играть":
-                return new GameStartEvent();
-            default:
-                return new GameClosedEvent();
+        catch (GameClosedException e) {
+            AnsiConsole.Clear();
+            AnsiConsole.WriteLine(e.Message);
         }
-    }
-
-    private async Task InputResult() {
-        
     }
 }

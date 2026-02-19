@@ -15,9 +15,6 @@ public class GameService {
     }
     
     public async Task StartGameAsync() {
-        var determineRoleEvents = _game.SetupGame(_brains.Keys.ToList());
-        foreach (var evt in determineRoleEvents) {
-            await _brains[evt.username].InformAboutRole(evt.Role);
-        }
+        _game.SetupGame(_brains.Keys.ToList());
     }
 }

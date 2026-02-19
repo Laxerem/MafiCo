@@ -9,6 +9,8 @@ namespace MafiCo.Domain.Agregate;
 public class Game {
     private Dictionary<string, Player> _players;
     private DayPhase _currentPhase;
+    private Chat _chat;
+    
     private readonly Random _random;
 
     public Game() {
@@ -43,13 +45,10 @@ public class Game {
         }
     }
     
-    public IEnumerable<RoleIsDetermineEvent> SetupGame(List<string> players) {
+    public void SetupGame(List<string> players) {
         if (players.Count <= 2) {
             throw new GameException("Для игры недостаточно игроков");
         }
         this.DetermineRoles(players);
-
-        var result = _players.Select(x => new RoleIsDetermineEvent(x.Key, x.Value.Role));
-        return result;
     }
 }

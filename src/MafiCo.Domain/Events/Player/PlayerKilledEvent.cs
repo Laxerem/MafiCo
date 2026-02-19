@@ -3,4 +3,4 @@ using MafiCo.Domain.ValueObjects;
 
 namespace MafiCo.Domain.Events;
 
-public record RoleIsDetermineEvent(string username, Role Role) : IGameEvent;
+public record PlayerKilledEvent(string Username) : INotification,  IDomainEvent;

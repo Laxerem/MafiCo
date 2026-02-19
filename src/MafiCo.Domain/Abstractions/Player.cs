@@ -1,4 +1,6 @@
+using MafiCo.Domain.Entities;
 using MafiCo.Domain.Events;
+using MafiCo.Domain.Events.Player;
 using MafiCo.Domain.Exceptions;
 using MafiCo.Domain.ValueObjects;
 
@@ -6,13 +8,13 @@ namespace MafiCo.Domain.Abstractions;
 
 public abstract class Player : Entity {
     public string Name { get; protected set; }
-    public Role Role { get; protected set; }
     public bool IsAlive { get; private set; }
+    private Role _role;
 
     public Player(string name, Role role) {
         Name = name;
-        Role = role;
         IsAlive = true;
+        _role = role;
     }
     
     internal void Kill() {
@@ -20,6 +22,14 @@ public abstract class Player : Entity {
     }
 
     public void Vote(string username) {
-        AddNotification(new PlayerVotingEvent(username));
+        if (IsAlive == true) {
+            AddNotification(new PlayerVotingEvent(username));   
+        }
+    }
+
+    public void Say(string text) {
+        if (IsAlive == true) {
+            AddNotification(new PlayerSayEvent(Name, text));
+        }
     }
 }
