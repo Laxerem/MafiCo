@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace MafiCo.Infrastructure.Configurations;
 
-public class ProfileConfiguration : IEntityTypeConfiguration<Profile> {
-    public void Configure(EntityTypeBuilder<Profile> builder) {
+public class ProfileConfiguration : EntityConfiguration<Profile> {
+    public override void Configure(EntityTypeBuilder<Profile> builder) {
+        base.Configure(builder);
+        
         builder.ToTable("Profiles");
-        builder.HasKey(x => x.Id);
-        builder.Property(x => x.Id).ValueGeneratedNever();
         builder
             .Property(x => x.Name)
             .HasMaxLength(15)

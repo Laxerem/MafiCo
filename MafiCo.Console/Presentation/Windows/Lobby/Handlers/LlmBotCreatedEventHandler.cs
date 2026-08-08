@@ -1,10 +1,9 @@
-using MafiCo.Console.LobbyContext.Events;
+using MafiCo.Console.Presentation.Windows.Lobby.Events;
 using MafiCo.Domain.AggregatesModel.LlmBotAggregate;
 using MafiCo.Domain.SeedWork;
 using MediatR;
-using Spectre.Console;
 
-namespace MafiCo.Console.LobbyContext.Handlers;
+namespace MafiCo.Console.Presentation.Windows.Lobby.Handlers;
 
 public class LlmBotCreatedEventHandler : INotificationHandler<LlmBotCreatedEvent> {
     private readonly ILlmBotRepository _repository;

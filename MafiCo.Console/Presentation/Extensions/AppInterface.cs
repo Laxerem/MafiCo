@@ -3,7 +3,7 @@ using Spectre.Console;
 namespace MafiCo.Console.Presentation.Extensions;
 
 public static class AppInterface {
-    public static async Task MakeChoice(Dictionary<string, Func<Task>> choices) {
+    public static async Task GiveChoice(Dictionary<string, Func<Task>> choices) {
         var choicesText = choices.Keys.ToList();
         
         var selected = await AnsiConsole.PromptAsync(
@@ -12,5 +12,9 @@ public static class AppInterface {
         
         var func = choices[selected];
         await func.Invoke();
+    }
+
+    public static async Task<string> GetUserInput(string title) {
+        return await AnsiConsole.PromptAsync(new TextPrompt<string>(title));
     }
 }

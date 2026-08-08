@@ -7,7 +7,8 @@ namespace MafiCo.Console.Presentation.Windows.Lobby;
 public class SettingsWindow : Window {
     public async override Task Show() {
         AnsiConsole.Console.Write(new FigletText("Settings"));
-        await AppInterface.MakeChoice(new() {
+        await AppInterface.GiveChoice(new() {
+                {"Создать бота", async () => await SwitchTo<LlmBotCreatingWindow>()},
                 {"Назад", async () => await SwitchTo<MenuWindow>()}
             }
         );
