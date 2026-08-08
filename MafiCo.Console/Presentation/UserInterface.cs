@@ -1,3 +1,4 @@
+using MafiCo.Console.Presentation.Base;
 using MafiCo.Console.Presentation.Events;
 using MafiCo.Console.Presentation.Events.Common;
 using MediatR;
@@ -9,8 +10,9 @@ public class UserInterface {
     private Window _window;
     private readonly IMediator _mediator;
 
-    public UserInterface(Window startWindow) {
+    public UserInterface(Window startWindow, IMediator mediator) {
         _window = startWindow;
+        _mediator = mediator;
         SubscribeOnWindowEvents(startWindow);
     }
     private async Task ChangeWindow(SwitchWindowEvent evt) {
@@ -37,6 +39,7 @@ public class UserInterface {
 
     public async Task StartRetention() {
         try {
+            AnsiConsole.Clear();
             await _window.Show();
         }
         catch (Exception ex) {
