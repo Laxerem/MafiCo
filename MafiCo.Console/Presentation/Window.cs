@@ -1,12 +1,12 @@
-using MafiCo.Console.App.UI.Events;
 using MafiCo.Console.Presentation.Events;
+using MafiCo.Console.Presentation.Events.Common;
 using Spectre.Console;
 
 namespace MafiCo.Console.Presentation;
 
 public abstract class Window {
     public event Func<SwitchWindowEvent, Task>? OnSwitchWindow;
-    public event Action<UiEvent>? OnEvent;
+    public event Func<UiEvent, Task>? OnEvent;
     
     protected async Task<string> WaitChoice(string title, IEnumerable<string> choices) {
         var selected = await AnsiConsole.PromptAsync(

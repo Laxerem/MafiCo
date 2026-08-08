@@ -10,11 +10,13 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="MediatR" Version="14.2.0" />
       <PackageReference Include="Spectre.Console" Version="0.57.2" />
     </ItemGroup>
 
     <ItemGroup>
       <Folder Include="GameContext\" />
+      <Folder Include="LobbyContext\Events\" />
     </ItemGroup>
 
     <ItemGroup>

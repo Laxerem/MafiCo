@@ -1,3 +1,5 @@
-namespace MafiCo.Console.App.UI.Events;
+using MediatR;
 
-public interface UiEvent;
+namespace MafiCo.Console.Presentation.Events.Common;
+
+public interface UiEvent : INotification;

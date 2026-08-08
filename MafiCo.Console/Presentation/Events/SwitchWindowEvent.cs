@@ -1,4 +1,4 @@
-using MafiCo.Console.App.UI.Events;
+using MafiCo.Console.Presentation.Events.Common;
 
 namespace MafiCo.Console.Presentation.Events;
 
