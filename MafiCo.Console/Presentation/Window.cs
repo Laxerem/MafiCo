@@ -5,7 +5,7 @@ using Spectre.Console;
 namespace MafiCo.Console.Presentation;
 
 public abstract class Window {
-    public event Action<SwitchWindowEvent>? OnSwitchWindow;
+    public event Func<SwitchWindowEvent, Task>? OnSwitchWindow;
     public event Action<UiEvent>? OnEvent;
     
     protected async Task<string> WaitChoice(string title, IEnumerable<string> choices) {
@@ -16,9 +16,9 @@ public abstract class Window {
         return selected;
     }
     
-    protected void SwitchTo<T>() where T : Window {
+    protected async Task SwitchTo<T>() where T : Window {
         AnsiConsole.Clear();
-        OnSwitchWindow?.Invoke(new SwitchWindowEvent(typeof(T)));
+        await OnSwitchWindow?.Invoke(new SwitchWindowEvent(typeof(T)));
     }
     
     public abstract Task Show();

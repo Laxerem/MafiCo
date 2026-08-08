@@ -12,7 +12,7 @@ public class MenuWindow : Window {
                 throw new Exception("Мафия не ждёт...");
                 break;
             case "Настройки":
-                SwitchTo<SettingsWindow>();
+                await SwitchTo<SettingsWindow>();
                 break;
             case "Выйти":
                 throw new Exception("Мафия не ждёт...");

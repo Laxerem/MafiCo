@@ -10,11 +10,11 @@ public class UserInterface {
         _window = startWindow;
         _window.OnSwitchWindow += ChangeWindow;
     }
-    private void ChangeWindow(SwitchWindowEvent evt) {
-        Type type = evt.WindowType;
-        object instance = Activator.CreateInstance(type);
-        _window = instance as Window ?? throw new InvalidOperationException();
-        _window.Show();
+    private async Task ChangeWindow(SwitchWindowEvent evt) {
+        _window.OnSwitchWindow -= ChangeWindow;
+        _window = (Window)Activator.CreateInstance(evt.WindowType)!;
+        _window.OnSwitchWindow += ChangeWindow;
+        await _window.Show();
     }
 
     public async Task StartRetention() {
