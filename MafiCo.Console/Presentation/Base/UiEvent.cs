@@ -1,5 +1,5 @@
 using MediatR;
 
-namespace MafiCo.Console.Presentation.Events.Common;
+namespace MafiCo.Console.Presentation.Base;
 
 public interface UiEvent : INotification;

@@ -1,4 +1,5 @@
-﻿using MafiCo.Console.Presentation;
+﻿using MafiCo.Console;
+using MafiCo.Console.Presentation;
 using MafiCo.Console.Presentation.Base;
 using MafiCo.Console.Presentation.Windows.Lobby;
 using MafiCo.Domain.AggregatesModel.LlmBotAggregate;
@@ -20,10 +21,8 @@ var app = Host.CreateDefaultBuilder(args)
         services.AddMediatR(conf => 
             conf.RegisterServicesFromAssembly(typeof(Program).Assembly)
         );
-        services.AddTransient<Window, MenuWindow>();
-        services.AddTransient<MenuWindow>();
-        services.AddTransient<SettingsWindow>();
-        services.AddTransient<LlmBotCreatingWindow>();
+        services.AddTransient<Window, MenuWindow>(); // Start Window
+        services.AddUiWindows();
         services.AddScoped<UserInterface>();
     })
     .Build();

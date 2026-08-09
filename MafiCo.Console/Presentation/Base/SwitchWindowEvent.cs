@@ -1,6 +1,4 @@
-using MafiCo.Console.Presentation.Events.Common;
-
-namespace MafiCo.Console.Presentation.Events;
+namespace MafiCo.Console.Presentation.Base;
 
 public record SwitchWindowEvent(
     Type WindowType

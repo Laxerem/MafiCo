@@ -1,4 +1,4 @@
-using MafiCo.Console.Presentation.Events.Common;
+using MafiCo.Console.Presentation.Base;
 
 namespace MafiCo.Console.Presentation.Windows.Lobby.Events;
 

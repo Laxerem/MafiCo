@@ -1,4 +1,5 @@
 using MafiCo.Console.Presentation.Base;
+using MafiCo.Console.Presentation.Exceptions;
 using MafiCo.Console.Presentation.Extensions;
 using Spectre.Console;
 
@@ -10,7 +11,7 @@ public class MenuWindow : Window {
         await AppInterface.GiveChoice(new () {
             {"Играть", () => throw new Exception("Мафия не ждёт..")},
             {"Настройки", async () => await SwitchTo<SettingsWindow>()},
-            {"Выйти", () => throw new Exception("Мафия не ждёт...")}
+            {"Выйти", () => throw new GameClosedException()}
         });
     }
 }

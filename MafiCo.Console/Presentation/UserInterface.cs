@@ -1,7 +1,8 @@
 using MafiCo.Console.Presentation.Base;
-using MafiCo.Console.Presentation.Events;
-using MafiCo.Console.Presentation.Events.Common;
+using MafiCo.Console.Presentation.Exceptions;
+using MafiCo.Domain.AggregatesModel.ProfileAggregate;
 using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 using Spectre.Console;
 
 namespace MafiCo.Console.Presentation;
@@ -9,16 +10,20 @@ namespace MafiCo.Console.Presentation;
 public class UserInterface {
     private Window _window;
     private readonly IMediator _mediator;
+    private readonly IServiceProvider _services;
 
-    public UserInterface(Window startWindow, IMediator mediator) {
+    public UserInterface(Window startWindow, IMediator mediator, IServiceProvider serviceProvider) {
         _window = startWindow;
         _mediator = mediator;
-        SubscribeOnWindowEvents(startWindow);
+        _services = serviceProvider;
+        SubscribeOnWindowEvents();
     }
     private async Task ChangeWindow(SwitchWindowEvent evt) {
         ClearEventListeners();
-        var newWindow = (Window)Activator.CreateInstance(evt.WindowType)!;
-        SubscribeOnWindowEvents(newWindow);
+        using var scope = _services.CreateScope();
+        var newWindow = (Window)scope.ServiceProvider.GetService(evt.WindowType)!;
+        _window = newWindow;
+        SubscribeOnWindowEvents();
         await _window.Show();
     }
 
@@ -26,8 +31,7 @@ public class UserInterface {
         await _mediator.Publish(evt);
     }
 
-    private void SubscribeOnWindowEvents(Window window) {
-        _window = window;
+    private void SubscribeOnWindowEvents() {
         _window.OnSwitchWindow += ChangeWindow;
         _window.OnEvent += OnWindowEvent;
     }
@@ -41,6 +45,10 @@ public class UserInterface {
         try {
             AnsiConsole.Clear();
             await _window.Show();
+        }
+        catch (GameClosedException) {
+            AnsiConsole.Clear();
+            AnsiConsole.Console.Write(new Text("Мафия не ждёт...", new Style(new Color(255,0,0))));
         }
         catch (Exception ex) {
             AnsiConsole.WriteException(ex);
