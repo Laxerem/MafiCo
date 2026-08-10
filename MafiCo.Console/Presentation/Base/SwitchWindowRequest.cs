@@ -1,5 +1,5 @@
 namespace MafiCo.Console.Presentation.Base;
 
-public record SwitchWindowEvent(
+public record SwitchWindowRequest(
     Type WindowType
-) : UiEvent;
+) : UiRequest;

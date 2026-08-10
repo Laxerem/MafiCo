@@ -1,13 +1,15 @@
 using MafiCo.Console.Presentation.Base;
 using MafiCo.Console.Presentation.Exceptions;
 using MafiCo.Domain.AggregatesModel.ProfileAggregate;
+using MafiCo.Domain.Interfaces;
+using MafiCo.Infrastructure.Handlers;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Spectre.Console;
 
 namespace MafiCo.Console.Presentation;
 
-public class UserInterface {
+public class UserInterface : INotificationHandler<InterfaceEvent> {
     private Window _window;
     private readonly IMediator _mediator;
     private readonly IServiceProvider _services;
@@ -18,7 +20,7 @@ public class UserInterface {
         _services = serviceProvider;
         SubscribeOnWindowEvents();
     }
-    private async Task ChangeWindow(SwitchWindowEvent evt) {
+    private async Task ChangeWindow(SwitchWindowRequest evt) {
         ClearEventListeners();
         using var scope = _services.CreateScope();
         var newWindow = (Window)scope.ServiceProvider.GetService(evt.WindowType)!;
@@ -27,7 +29,7 @@ public class UserInterface {
         await _window.Show();
     }
 
-    private async Task OnWindowEvent(UiEvent evt) {
+    private async Task OnWindowEvent(UiRequest evt) {
         await _mediator.Publish(evt);
     }
 
@@ -53,5 +55,9 @@ public class UserInterface {
         catch (Exception ex) {
             AnsiConsole.WriteException(ex);
         }
+    }
+
+    public async Task Handle(InterfaceEvent notification, CancellationToken cancellationToken) {
+        await _window.HandleEvent(notification);
     }
 }

@@ -5,7 +5,7 @@ using MediatR;
 
 namespace MafiCo.Console.Presentation.Windows.Lobby.Handlers;
 
-public class LlmBotCreatedEventHandler : INotificationHandler<LlmBotCreatedEvent> {
+public class LlmBotCreatedEventHandler : INotificationHandler<CreateLlmBotRequest> {
     private readonly ILlmBotRepository _repository;
     private readonly IUnitOfWork _unitOfWork;
     
@@ -14,7 +14,7 @@ public class LlmBotCreatedEventHandler : INotificationHandler<LlmBotCreatedEvent
         _unitOfWork = unitOfWork;
     }
     
-    public async Task Handle(LlmBotCreatedEvent evt, CancellationToken cancellationToken) {
+    public async Task Handle(CreateLlmBotRequest evt, CancellationToken cancellationToken) {
         var model = new LlmBot(evt.ModelName, evt.Url, evt.ApiKey);
         _repository.Add(model);
         await _unitOfWork.SaveEntitiesAsync(cancellationToken);
