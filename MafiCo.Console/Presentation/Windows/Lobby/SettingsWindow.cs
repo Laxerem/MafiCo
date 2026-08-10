@@ -9,6 +9,7 @@ public class SettingsWindow : Window {
         AnsiConsole.Console.Write(new FigletText("Settings"));
         await AppInterface.GiveChoice(new() {
                 {"Создать бота", async () => await SwitchTo<LlmBotCreatingWindow>()},
+                {"Изменить имя", async () => await SwitchTo<ChangeNameWindow>()},
                 {"Назад", async () => await SwitchTo<MenuWindow>()}
             }
         );
