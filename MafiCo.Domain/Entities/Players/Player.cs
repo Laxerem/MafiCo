@@ -4,19 +4,14 @@ using MafiCo.Domain.SeedWork;
 
 namespace MafiCo.Domain.Entities.Players;
 
-public abstract class Player : Entity {
-    public readonly string Name;
-    private Role _role;
+public abstract class Player(Guid id) : Entity(id) {
 
-    public Player(string name, Role role) {
-        Name = name;
-        _role = role;
-    }
+    protected abstract Role Role { get; init; }
 
-    public void Vote(Player target) {
-        if (target.Id == Id) {
+    public void Vote(Guid targetId) {
+        if (targetId == Id) {
             throw new PlayerException("You cannot vote for yourself.");
         }
-        AddNotification(new PlayerVotedEvent(Id, target.Id));
     }
+    public Role GetRole() => Role;
 }

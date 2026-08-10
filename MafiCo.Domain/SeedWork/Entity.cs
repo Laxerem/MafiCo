@@ -5,12 +5,12 @@ namespace MafiCo.Domain.SeedWork;
 public abstract class Entity {
     public readonly Guid Id;
     public List<IDomainEvent> Notifications { get; protected set; }
-    public Entity() {
-        Id = Guid.NewGuid();
+    public Entity(Guid id) {
+        Id = id;
         Notifications = new List<IDomainEvent>();
     }
     
-    public void AddNotification(IDomainEvent notification) {
+    protected void AddNotification(IDomainEvent notification) {
         Notifications.Add(notification);
     }
 

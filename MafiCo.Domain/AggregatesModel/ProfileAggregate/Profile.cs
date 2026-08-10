@@ -10,7 +10,7 @@ public class Profile : Entity, IAggregateRoot {
     public int VictoriesCount { get; private set; }
     public int DefeatsCount { get; private set; }
 
-    private Profile(string name) {
+    private Profile(string name) :  base(Guid.NewGuid()) {
         Name = name;
     }
 

@@ -4,4 +4,4 @@ using MediatR;
 
 namespace MafiCo.Domain.Events.Players;
 
-public record PlayerVotedEvent(Guid Id, Guid TargetId) : IDomainEvent;
+public record PlayerVotedEvent(Guid VoterId, Guid TargetId) : IDomainEvent;

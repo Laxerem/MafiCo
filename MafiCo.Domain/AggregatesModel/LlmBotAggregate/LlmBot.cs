@@ -8,7 +8,7 @@ public class LlmBot : Entity, IAggregateRoot {
     public string Url {get; private set;}
     public string ApiKey {get; private set;}
 
-    public LlmBot(string modelName, string url, string apiKey) {
+    public LlmBot(string modelName, string url, string apiKey) : base(Guid.NewGuid()) {
         ModelName = modelName;
         Url = url;
         ApiKey = apiKey;
