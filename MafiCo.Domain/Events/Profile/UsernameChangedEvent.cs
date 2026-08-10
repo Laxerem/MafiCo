@@ -1,4 +1,5 @@
 using MafiCo.Domain.Interfaces;
+using MediatR;
 
 namespace MafiCo.Domain.Events.Profile;
 
