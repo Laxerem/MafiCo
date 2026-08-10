@@ -14,10 +14,7 @@ using Microsoft.Extensions.Logging;
 
 var app = Host.CreateDefaultBuilder(args)
     .ConfigureServices(services => {
-        services.AddDbContext<ApplicationContext>();
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
-        services.AddScoped<IProfileRepository, ProfileRepository>();
-        services.AddScoped<ILlmBotRepository, LlmBotRepository>();
+        services.AddDatabase();
         services.AddMediatR(conf => 
             conf.RegisterServicesFromAssembly(typeof(Program).Assembly)
         );
