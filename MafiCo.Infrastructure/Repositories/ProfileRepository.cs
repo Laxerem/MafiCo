@@ -21,4 +21,8 @@ public class ProfileRepository : IProfileRepository {
     public async Task<Profile?> GetAsync(Guid id) {
         return await _context.Profiles.FindAsync(id);
     }
+
+    public async Task<List<Profile>> GetAllAsync() {
+        return await _context.Profiles.ToListAsync();
+    }
 }
