@@ -16,8 +16,8 @@ public class ConfigurationController {
         if (!File.Exists(path)) throw new FileNotFoundException($"File {path} does not exist");
     }
 
-    public void UpdateUser(UserOptions options) {
+    public async Task UpdateUserAsync(UserOptions options) {
         _configuration.User = options;
-        File.WriteAllTextAsync(_path, JsonSerializer.Serialize(_configuration));
+        await File.WriteAllTextAsync(_path, JsonSerializer.Serialize(_configuration));
     }
 }
