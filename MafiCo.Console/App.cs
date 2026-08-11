@@ -29,7 +29,10 @@ public class App {
         }
         else {
             var userProfile = await _profileRepository.GetAsync(_options.Id.Value);
-            initialWindow = new MenuWindow(new MenuData(userProfile!.ToProfileInfo()));
+            if (userProfile == null) {
+                throw new Exception($"Profile with id {_options.Id} not found");
+            }
+            initialWindow = new MenuWindow();
         }
         var appInterface = _services.GetRequiredService<UserInterface>();
         await appInterface.StartRetention(initialWindow!);

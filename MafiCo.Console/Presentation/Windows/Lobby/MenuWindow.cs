@@ -7,10 +7,7 @@ using Spectre.Console;
 
 namespace MafiCo.Console.Presentation.Windows.Lobby;
 
-public class MenuWindow : ContextWindow<MenuData> {
-    public MenuWindow(MenuData context) : base(context) {
-
-    }
+public class MenuWindow : Window{
 
     public async override Task Show() {
         AnsiConsole.Console.Write(new FigletText("MafiCo"));

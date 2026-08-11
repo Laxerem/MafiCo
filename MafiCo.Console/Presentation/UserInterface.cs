@@ -17,8 +17,7 @@ public class UserInterface {
     }
     private async Task ChangeWindow(SwitchWindowRequest evt) {
         ClearEventListeners();
-        using var scope = _services.CreateScope();
-        var newWindow = (Window)scope.ServiceProvider.GetService(evt.WindowType)!;
+        var newWindow = (Window)_services.GetRequiredService(evt.WindowType);
         _window = newWindow;
         SubscribeOnWindowEvents();
         await _window.Show();
