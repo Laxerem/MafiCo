@@ -1,4 +1,5 @@
-﻿using MafiCo.Console;
+﻿using System.Runtime.CompilerServices;
+using MafiCo.Console;
 using MafiCo.Console.Configuration;
 using MafiCo.Console.Configuration.Options;
 using Microsoft.Extensions.Configuration;
@@ -6,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
-var configPath = "appconfig.json";
+var configPath = GetConfigPath();
 
 var app = Host.CreateDefaultBuilder(args)
     .ConfigureAppConfiguration(cfg => {
@@ -28,3 +29,6 @@ var app = Host.CreateDefaultBuilder(args)
 using var scope = app.Services.CreateScope();
 var application = scope.ServiceProvider.GetRequiredService<App>();
 await application.RunAsync();
+
+static string GetConfigPath([CallerFilePath] string sourceFilePath = "") =>
+    Path.Combine(Path.GetDirectoryName(sourceFilePath)!, "appconfig.json");
