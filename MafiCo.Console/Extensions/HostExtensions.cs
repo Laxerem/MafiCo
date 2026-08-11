@@ -1,17 +1,23 @@
 using System.Reflection;
+using MafiCo.Console.Configuration.Options;
+using MafiCo.Console.Presentation;
 using MafiCo.Console.Presentation.Base;
+using MafiCo.Console.Presentation.Windows.Lobby;
 using MafiCo.Domain.AggregatesModel.LlmBotAggregate;
 using MafiCo.Domain.AggregatesModel.ProfileAggregate;
 using MafiCo.Domain.SeedWork;
 using MafiCo.Infrastructure;
 using MafiCo.Infrastructure.Repositories;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace MafiCo.Console;
 
 public static class HostExtensions {
-    public static IServiceCollection AddUiWindows(this IServiceCollection services) {
+    public static IServiceCollection AddUi(this IServiceCollection services) {
+        services.AddScoped<UserInterface>();
+        
         var assembly = Assembly.GetExecutingAssembly();
         var windowImplementations = assembly
             .GetTypes()
@@ -20,6 +26,12 @@ public static class HostExtensions {
         foreach (var window in windowImplementations) {
             services.AddTransient(window);
         }
+        return services;
+    }
+
+    public static IServiceCollection ConfigureServices(this IServiceCollection services, IConfiguration configuration) {
+        services.Configure<UserOptions>(configuration.GetSection("User"));
+        services.Configure<GlobalConfigOption>(configuration);
         return services;
     }
 

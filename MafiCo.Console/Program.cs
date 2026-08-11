@@ -1,29 +1,30 @@
 ﻿using MafiCo.Console;
-using MafiCo.Console.Presentation;
-using MafiCo.Console.Presentation.Base;
-using MafiCo.Console.Presentation.Windows.Lobby;
-using MafiCo.Domain.AggregatesModel.LlmBotAggregate;
-using MafiCo.Domain.AggregatesModel.ProfileAggregate;
-using MafiCo.Domain.SeedWork;
-using MafiCo.Infrastructure;
-using MafiCo.Infrastructure.Repositories;
-using Microsoft.EntityFrameworkCore;
+using MafiCo.Console.Configuration;
+using MafiCo.Console.Configuration.Options;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+
+var configPath = "appconfig.json";
 
 var app = Host.CreateDefaultBuilder(args)
-    .ConfigureServices(services => {
+    .ConfigureAppConfiguration(cfg => {
+        cfg.AddJsonFile(configPath, reloadOnChange: true, optional: false);
+    })
+    .ConfigureServices((builder, services) => {
         services.AddDatabase();
+        services.ConfigureServices(builder.Configuration);
+        services.AddUi();
         services.AddMediatR(conf => 
             conf.RegisterServicesFromAssembly(typeof(Program).Assembly)
         );
-        services.AddTransient<Window, MenuWindow>(); // Start Window
-        services.AddUiWindows();
-        services.AddScoped<UserInterface>();
+        services.AddScoped<ConfigurationController>(sp =>
+            new ConfigurationController(configPath, sp.GetRequiredService<IOptions<GlobalConfigOption>>()));
+        services.AddScoped<App>();
     })
     .Build();
 
 using var scope = app.Services.CreateScope();
-var userInterface = scope.ServiceProvider.GetRequiredService<UserInterface>();
-await userInterface.StartRetention();
+var application = scope.ServiceProvider.GetRequiredService<App>();
+await application.RunAsync();

@@ -11,11 +11,9 @@ public class UserInterface {
     private readonly IMediator _mediator;
     private readonly IServiceProvider _services;
 
-    public UserInterface(Window startWindow, IMediator mediator, IServiceProvider serviceProvider) {
-        _window = startWindow;
+    public UserInterface(IMediator mediator, IServiceProvider serviceProvider) {
         _mediator = mediator;
         _services = serviceProvider;
-        SubscribeOnWindowEvents();
     }
     private async Task ChangeWindow(SwitchWindowRequest evt) {
         ClearEventListeners();
@@ -40,7 +38,9 @@ public class UserInterface {
         _window.OnEvent -= OnWindowEvent;
     }
 
-    public async Task StartRetention() {
+    public async Task StartRetention(Window window) {
+        _window = window;
+        SubscribeOnWindowEvents();
         try {
             AnsiConsole.Clear();
             await _window.Show();

@@ -2,11 +2,16 @@ using MafiCo.Console.Presentation.Base;
 using MafiCo.Console.Presentation.Exceptions;
 using MafiCo.Console.Presentation.Extensions;
 using MafiCo.Console.Presentation.Windows.Game;
+using MafiCo.Console.Presentation.Windows.Lobby.Context;
 using Spectre.Console;
 
 namespace MafiCo.Console.Presentation.Windows.Lobby;
 
-public class MenuWindow : Window {
+public class MenuWindow : ContextWindow<MenuData> {
+    public MenuWindow(MenuData context) : base(context) {
+
+    }
+
     public async override Task Show() {
         AnsiConsole.Console.Write(new FigletText("MafiCo"));
         await AppComponents.GiveChoice(new () {
