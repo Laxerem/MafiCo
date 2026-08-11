@@ -13,8 +13,5 @@ public class GameService {
     public async Task Start() {
         var game = new Game();
         var profiles = await _profileRepository.GetAllAsync();
-        foreach (var profile in profiles) {
-            game.AddPlayer(profile.Id);
-        }
     }
 }
