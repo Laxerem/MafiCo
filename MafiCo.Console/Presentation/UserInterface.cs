@@ -1,15 +1,12 @@
 using MafiCo.Console.Presentation.Base;
 using MafiCo.Console.Presentation.Exceptions;
-using MafiCo.Domain.AggregatesModel.ProfileAggregate;
-using MafiCo.Domain.Interfaces;
-using MafiCo.Infrastructure.Handlers;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Spectre.Console;
 
 namespace MafiCo.Console.Presentation;
 
-public class UserInterface : INotificationHandler<InterfaceEvent> {
+public class UserInterface {
     private Window _window;
     private readonly IMediator _mediator;
     private readonly IServiceProvider _services;
@@ -29,7 +26,7 @@ public class UserInterface : INotificationHandler<InterfaceEvent> {
         await _window.Show();
     }
 
-    private async Task OnWindowEvent(UiRequest evt) {
+    private async Task OnWindowEvent(UseCase evt) {
         await _mediator.Publish(evt);
     }
 
@@ -55,9 +52,5 @@ public class UserInterface : INotificationHandler<InterfaceEvent> {
         catch (Exception ex) {
             AnsiConsole.WriteException(ex);
         }
-    }
-
-    public async Task Handle(InterfaceEvent notification, CancellationToken cancellationToken) {
-        await _window.HandleEvent(notification);
     }
 }

@@ -7,10 +7,10 @@ namespace MafiCo.Console.Presentation.Windows.Lobby;
 
 public class LlmBotCreatingWindow : Window {
     public async override Task Show() {
-        var modelName = await AppInterface.GetUserInput("Model name:");
-        var providerUrl = await AppInterface.GetUserInput("Provider url:");
-        var apiKey = await AppInterface.GetUserInput("Api key:");
+        var modelName = await AppComponents.GetUserInput("Model name:");
+        var providerUrl = await AppComponents.GetUserInput("Provider url:");
+        var apiKey = await AppComponents.GetUserInput("Api key:");
         
-        await SendRequest(new CreateLlmBotRequest(modelName, providerUrl, apiKey));
+        await UseAsync(new CreateLlmBot(modelName, providerUrl, apiKey));
     }
 }

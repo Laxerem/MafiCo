@@ -9,6 +9,6 @@ public class GameWindow : Window {
     }
     
     public async override Task Show() {
-        await SendRequest(new StartGameRequest());
+        await UseAsync(new StartGame());
     }
 }

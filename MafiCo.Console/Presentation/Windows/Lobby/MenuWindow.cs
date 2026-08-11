@@ -9,7 +9,7 @@ namespace MafiCo.Console.Presentation.Windows.Lobby;
 public class MenuWindow : Window {
     public async override Task Show() {
         AnsiConsole.Console.Write(new FigletText("MafiCo"));
-        await AppInterface.GiveChoice(new () {
+        await AppComponents.GiveChoice(new () {
             {"Играть", async () => await SwitchTo<GameWindow>()},
             {"Настройки", async () => await SwitchTo<SettingsWindow>()},
             {"Выйти", () => throw new GameClosedException()}

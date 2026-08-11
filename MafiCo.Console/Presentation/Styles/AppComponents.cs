@@ -2,7 +2,7 @@ using Spectre.Console;
 
 namespace MafiCo.Console.Presentation.Extensions;
 
-public static class AppInterface {
+public static class AppComponents {
     public static async Task GiveChoice(Dictionary<string, Func<Task>> choices) {
         var choicesText = choices.Keys.ToList();
         
