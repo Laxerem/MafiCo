@@ -1,6 +1,7 @@
 using MafiCo.Console.Presentation.Windows.Lobby.Events;
 using MafiCo.Domain.AggregatesModel.LlmBotAggregate;
 using MafiCo.Domain.SeedWork;
+using MafiCo.Infrastructure.Interfaces;
 using MediatR;
 
 namespace MafiCo.Console.Presentation.Windows.Lobby.Handlers;
