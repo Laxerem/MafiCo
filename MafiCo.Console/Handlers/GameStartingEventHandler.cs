@@ -3,7 +3,7 @@ using MafiCo.Infrastructure.Services;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace MafiCo.Console.Presentation.Windows.Lobby.Handlers;
+namespace MafiCo.Console.Handlers;
 
 public class GameStartingEventHandler : INotificationHandler<StartGame> {
     private readonly IServiceProvider _services;
