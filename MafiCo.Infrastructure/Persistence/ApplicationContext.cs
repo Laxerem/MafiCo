@@ -12,6 +12,7 @@ namespace MafiCo.Infrastructure;
 public class ApplicationContext : DbContext {
     public DbSet<Profile> Profiles { get; set; }
     public DbSet<LlmEntity> LlmBots { get; set; }
+    public DbSet<BotEntity> Bots { get; set; }
     private IDbContextTransaction? _currentTransaction = null;
 
     public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options) {
@@ -56,6 +57,7 @@ public class ApplicationContext : DbContext {
         modelBuilder.HasDefaultSchema("mafico");
         modelBuilder.ApplyConfiguration(new ProfileConfiguration());
         modelBuilder.ApplyConfiguration(new LlmEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new BotConfiguration());
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {

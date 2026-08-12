@@ -42,6 +42,7 @@ public static class HostExtensions {
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IProfileRepository, ProfileRepository>();
         services.AddScoped<ILlmEntityRepository, LlmEntityRepository>();
+        services.AddScoped<IBotRepository, BotRepository>();
         return services;
     }
 }
