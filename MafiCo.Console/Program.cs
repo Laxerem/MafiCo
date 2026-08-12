@@ -2,6 +2,8 @@
 using MafiCo.Console;
 using MafiCo.Console.Configuration;
 using MafiCo.Console.Configuration.Options;
+using MafiCo.Console.System;
+using MafiCo.Infrastructure.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -22,6 +24,7 @@ var app = Host.CreateDefaultBuilder(args)
         );
         services.AddScoped<ConfigurationController>(sp =>
             new ConfigurationController(configPath, sp.GetRequiredService<IOptions<GlobalConfigOption>>()));
+        services.AddScoped<IAppStore, AppStore>();
         services.AddScoped<App>();
     })
     .Build();
