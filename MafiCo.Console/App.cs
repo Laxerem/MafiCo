@@ -1,5 +1,4 @@
 using MafiCo.Console.Configuration.Options;
-using MafiCo.Console.Extensions;
 using MafiCo.Console.Presentation;
 using MafiCo.Console.Presentation.Base;
 using MafiCo.Console.Presentation.Windows.Lobby;

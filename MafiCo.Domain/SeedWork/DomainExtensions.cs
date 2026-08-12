@@ -1,8 +1,7 @@
-using MafiCo.Console.Presentation;
 using MafiCo.Domain.AggregatesModel.ProfileAggregate;
 using MafiCo.Domain.DTOs;
 
-namespace MafiCo.Console.Extensions;
+namespace MafiCo.Domain.SeedWork;
 
 public static class DomainExtensions {
     public static ProfileInfo ToProfileInfo(this Profile profile) {

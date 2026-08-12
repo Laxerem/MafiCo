@@ -1,4 +1,4 @@
-using MafiCo.Domain.Exceptions.Common;
+using MafiCo.Domain.SeedWork;
 
 namespace MafiCo.Domain.Exceptions;
 
