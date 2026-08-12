@@ -1,7 +1,7 @@
 using MafiCo.Domain.AggregatesModel.ProfileAggregate;
 using Microsoft.EntityFrameworkCore;
 
-namespace MafiCo.Infrastructure.Repositories;
+namespace MafiCo.Infrastructure.Persistence.Repositories;
 
 public class ProfileRepository : IProfileRepository {
     private readonly ApplicationContext _context;
