@@ -1,14 +1,13 @@
-using MafiCo.Domain.Interfaces;
-using MafiCo.Domain.SeedWork;
+namespace MafiCo.Infrastructure.Persistence.Entities;
 
-namespace MafiCo.Domain.AggregatesModel.LlmBotAggregate;
-
-public class LlmBot : Entity, IAggregateRoot {
+public class LlmEntity {
+    public Guid Id { get; init; }
     public string ModelName { get; private set; }
     public string Url {get; private set;}
     public string ApiKey {get; private set;}
 
-    public LlmBot(string modelName, string url, string apiKey) : base(Guid.NewGuid()) {
+    public LlmEntity(string modelName, string url, string apiKey) {
+        Id = Guid.NewGuid();
         ModelName = modelName;
         Url = url;
         ApiKey = apiKey;

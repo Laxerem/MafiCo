@@ -1,6 +1,8 @@
 ﻿using MafiCo.Domain.AggregatesModel.LlmBotAggregate;
 using MafiCo.Domain.AggregatesModel.ProfileAggregate;
 using MafiCo.Infrastructure.Configurations;
+using MafiCo.Infrastructure.Persistence.Configurations;
+using MafiCo.Infrastructure.Persistence.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
@@ -9,7 +11,7 @@ namespace MafiCo.Infrastructure;
 
 public class ApplicationContext : DbContext {
     public DbSet<Profile> Profiles { get; set; }
-    public DbSet<LlmBot> LlmBots { get; set; }
+    public DbSet<LlmEntity> LlmBots { get; set; }
     private IDbContextTransaction? _currentTransaction = null;
 
     public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options) {
@@ -53,7 +55,7 @@ public class ApplicationContext : DbContext {
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         modelBuilder.HasDefaultSchema("mafico");
         modelBuilder.ApplyConfiguration(new ProfileConfiguration());
-        modelBuilder.ApplyConfiguration(new LlmBotConfiguration());
+        modelBuilder.ApplyConfiguration(new LlmEntityConfiguration());
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {

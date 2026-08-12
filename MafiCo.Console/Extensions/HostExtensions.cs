@@ -9,7 +9,7 @@ using MafiCo.Domain.SeedWork;
 using MafiCo.Infrastructure;
 using MafiCo.Infrastructure.Interfaces;
 using MafiCo.Infrastructure.Persistence;
-using MafiCo.Infrastructure.Repositories;
+using MafiCo.Infrastructure.Persistence.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -41,7 +41,7 @@ public static class HostExtensions {
         services.AddDbContext<ApplicationContext>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IProfileRepository, ProfileRepository>();
-        services.AddScoped<ILlmBotRepository, LlmBotRepository>();
+        services.AddScoped<ILlmEntityRepository, LlmEntityRepository>();
         return services;
     }
 }
