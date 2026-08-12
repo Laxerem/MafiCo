@@ -3,7 +3,9 @@ using MafiCo.Console;
 using MafiCo.Console.Configuration;
 using MafiCo.Console.Configuration.Options;
 using MafiCo.Console.System;
+using MafiCo.Infrastructure;
 using MafiCo.Infrastructure.Interfaces;
+using MafiCo.Infrastructure.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -19,6 +21,7 @@ var app = Host.CreateDefaultBuilder(args)
     .ConfigureLogging(logging => logging.AddFilter("Microsoft.EntityFrameworkCore", LogLevel.Error))
     .ConfigureServices((builder, services) => {
         services.AddDatabase();
+        services.AddInfrastructure();
         services.ConfigureServices(builder.Configuration);
         services.AddUi();
         services.AddMediatR(conf =>
