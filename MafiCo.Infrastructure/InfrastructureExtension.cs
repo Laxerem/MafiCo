@@ -7,5 +7,6 @@ namespace MafiCo.Infrastructure;
 public static class InfrastructureExtension {
     public static void AddInfrastructure(this IServiceCollection services) {
         services.AddScoped<ProfileService>();
+        services.AddScoped<LlmService>();
     }
 }
