@@ -12,6 +12,10 @@ public class AppStore : IAppStore {
     }
     
     public void SetUser(Guid userId) {
-        _config.SetUser(new UserOptions() {Id = userId});
+        _config.SetUserOptions(new UserOptions() {Id = userId});
+    }
+
+    public Guid? GetUserId() {
+        return _config.GetUserOptions().Id;
     }
 }

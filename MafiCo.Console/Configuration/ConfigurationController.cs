@@ -16,8 +16,12 @@ public class ConfigurationController {
         if (!File.Exists(path)) throw new FileNotFoundException($"File {path} does not exist");
     }
 
-    public void SetUser(UserOptions options) {
+    public void SetUserOptions(UserOptions options) {
         _configuration.User = options;
         File.WriteAllText(_path, JsonSerializer.Serialize(_configuration));
+    }
+
+    public UserOptions GetUserOptions() {
+        return _configuration.User;
     }
 }
