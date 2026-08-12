@@ -1,10 +1,9 @@
-using MafiCo.Domain.SeedWork;
 using MafiCo.Infrastructure.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace MafiCo.Infrastructure;
+namespace MafiCo.Infrastructure.Persistence;
 
 public class UnitOfWork : IUnitOfWork {
     private readonly ApplicationContext _context;
@@ -16,8 +15,6 @@ public class UnitOfWork : IUnitOfWork {
     }
 
     public async Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default) {
-        Console.WriteLine(_context.Database.GetDbConnection().ConnectionString);
-        
         await _mediator.DispatchDomainEventsAsync(_context);
         await _context.SaveChangesAsync(cancellationToken);
         return true;

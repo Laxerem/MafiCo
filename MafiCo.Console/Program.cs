@@ -1,4 +1,4 @@
-﻿using System.Runtime.CompilerServices;
+using System.Runtime.CompilerServices;
 using MafiCo.Console;
 using MafiCo.Console.Configuration;
 using MafiCo.Console.Configuration.Options;
@@ -7,6 +7,7 @@ using MafiCo.Infrastructure.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 var configPath = GetConfigPath();
@@ -15,11 +16,12 @@ var app = Host.CreateDefaultBuilder(args)
     .ConfigureAppConfiguration(cfg => {
         cfg.AddJsonFile(configPath, reloadOnChange: true, optional: false);
     })
+    .ConfigureLogging(logging => logging.AddFilter("Microsoft.EntityFrameworkCore", LogLevel.Error))
     .ConfigureServices((builder, services) => {
         services.AddDatabase();
         services.ConfigureServices(builder.Configuration);
         services.AddUi();
-        services.AddMediatR(conf => 
+        services.AddMediatR(conf =>
             conf.RegisterServicesFromAssembly(typeof(Program).Assembly)
         );
         services.AddScoped<ConfigurationController>(sp =>

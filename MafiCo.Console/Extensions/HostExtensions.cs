@@ -8,6 +8,7 @@ using MafiCo.Domain.AggregatesModel.ProfileAggregate;
 using MafiCo.Domain.SeedWork;
 using MafiCo.Infrastructure;
 using MafiCo.Infrastructure.Interfaces;
+using MafiCo.Infrastructure.Persistence;
 using MafiCo.Infrastructure.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
