@@ -12,6 +12,7 @@ public class Profile : Entity, IAggregateRoot {
 
     private Profile(string name) :  base(Guid.NewGuid()) {
         Name = name;
+        AddNotification(new ProfileCreatedEvent(this));
     }
 
     public void ChangeName(string newName) {
