@@ -1,6 +1,6 @@
 using MafiCo.Infrastructure.Services;
 
-namespace MafiCo.Console.Presentation.Windows.Lobby.UseCases;
+namespace MafiCo.Console.Presentation.Features.Game.UseCases;
 
 public class StartGame {
     private readonly GameService _gameService;

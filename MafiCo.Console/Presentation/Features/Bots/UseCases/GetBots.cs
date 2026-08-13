@@ -3,7 +3,7 @@ using MafiCo.Infrastructure.Interfaces;
 using MafiCo.Infrastructure.Services;
 using Microsoft.Extensions.Configuration;
 
-namespace MafiCo.Console.Presentation.Windows.Lobby.UseCases;
+namespace MafiCo.Console.Presentation.Features.Bots.UseCases;
 
 public class GetBots {
     private readonly BotService _service;

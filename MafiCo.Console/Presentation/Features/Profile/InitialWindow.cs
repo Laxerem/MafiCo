@@ -1,10 +1,11 @@
 using MafiCo.Console.Presentation.Base;
 using MafiCo.Console.Presentation.Extensions;
-using MafiCo.Console.Presentation.Windows.Lobby.UseCases;
+using MafiCo.Console.Presentation.Features.Menu;
+using MafiCo.Console.Presentation.Features.Profile.UseCases;
 using MafiCo.Domain.SeedWork;
 using Spectre.Console;
 
-namespace MafiCo.Console.Presentation.Windows.Lobby;
+namespace MafiCo.Console.Presentation.Features.Profile;
 
 public class InitialWindow : Window {
     private readonly CreateProfile _createProfile;

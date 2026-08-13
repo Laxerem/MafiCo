@@ -1,10 +1,11 @@
 using MafiCo.Console.Presentation.Base;
 using MafiCo.Console.Presentation.Extensions;
-using MafiCo.Console.Presentation.Windows.Lobby.UseCases;
+using MafiCo.Console.Presentation.Features.Llm.UseCases;
+using MafiCo.Console.Presentation.Features.Menu;
 using MafiCo.Infrastructure.DTOs;
 using Spectre.Console;
 
-namespace MafiCo.Console.Presentation.Windows.Lobby;
+namespace MafiCo.Console.Presentation.Features.Llm;
 
 public class LlmSettingsWindow : Window {
     private readonly GetLlmModels _getLlmModels;

@@ -1,7 +1,7 @@
 using MafiCo.Infrastructure.DTOs;
 using MafiCo.Infrastructure.Services;
 
-namespace MafiCo.Console.Presentation.Windows.Lobby.UseCases;
+namespace MafiCo.Console.Presentation.Features.Llm.UseCases;
 
 public class GetLlmModels {
     private readonly LlmService _service;

@@ -1,7 +1,8 @@
 using MafiCo.Domain.AggregatesModel.ProfileAggregate;
 using MafiCo.Infrastructure.Interfaces;
+using DomainProfile = MafiCo.Domain.AggregatesModel.ProfileAggregate.Profile;
 
-namespace MafiCo.Console.Presentation.Windows.Lobby.UseCases;
+namespace MafiCo.Console.Presentation.Features.Profile.UseCases;
 
 // TODO: Move to infrastructure
 public class CreateProfile {
@@ -16,7 +17,7 @@ public class CreateProfile {
     }
 
     public async Task ExecuteAsync(string name) {
-        var profile = _repository.Add(Profile.Create(name));
+        var profile = _repository.Add(DomainProfile.Create(name));
         _store.SetUser(profile.Id);
         await _unitOfWork.SaveEntitiesAsync();
     }

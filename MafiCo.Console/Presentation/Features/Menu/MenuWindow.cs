@@ -1,11 +1,10 @@
 using MafiCo.Console.Presentation.Base;
 using MafiCo.Console.Presentation.Exceptions;
 using MafiCo.Console.Presentation.Extensions;
-using MafiCo.Console.Presentation.Windows.Game;
-using MafiCo.Console.Presentation.Windows.Lobby.Context;
+using MafiCo.Console.Presentation.Features.Game;
 using Spectre.Console;
 
-namespace MafiCo.Console.Presentation.Windows.Lobby;
+namespace MafiCo.Console.Presentation.Features.Menu;
 
 public class MenuWindow : Window{
 

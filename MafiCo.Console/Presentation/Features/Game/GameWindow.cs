@@ -1,7 +1,7 @@
 using MafiCo.Console.Presentation.Base;
-using MafiCo.Console.Presentation.Windows.Lobby.UseCases;
+using MafiCo.Console.Presentation.Features.Game.UseCases;
 
-namespace MafiCo.Console.Presentation.Windows.Game;
+namespace MafiCo.Console.Presentation.Features.Game;
 
 public class GameWindow : Window {
     private readonly StartGame _startGame;

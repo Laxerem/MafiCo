@@ -1,6 +1,6 @@
 using MafiCo.Infrastructure.Services;
 
-namespace MafiCo.Console.Presentation.Windows.Lobby.UseCases;
+namespace MafiCo.Console.Presentation.Features.Bots.UseCases;
 
 public class CreateBot {
     private readonly BotService _service;

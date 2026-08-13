@@ -1,6 +1,6 @@
 using MafiCo.Infrastructure.Services;
 
-namespace MafiCo.Console.Presentation.Windows.Lobby.UseCases;
+namespace MafiCo.Console.Presentation.Features.Profile.UseCases;
 
 // TODO: Move to infrastructure
 public class ChangeName {
