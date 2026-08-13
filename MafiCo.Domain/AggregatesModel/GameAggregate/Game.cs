@@ -22,7 +22,7 @@ public class Game : Entity, IAggregateRoot {
         _status = GameStatus.Setting;
     }
 
-    public void Start(IEnumerable<Guid> playerIds, int mafiaCount) {
+    public void Setup(IEnumerable<Guid> playerIds, int mafiaCount) {
         if (_status != GameStatus.Setting) {
             throw new DomainException("Game is already started");
         }
