@@ -5,4 +5,7 @@ namespace MafiCo.Infrastructure.Interfaces;
 public interface IBotRepository {
     Task AddAsync(BotEntity botEntity);
     Task<BotEntity?> GetAsync(Guid id);
+    Task<List<BotEntity>> GetAllAsync();
+    Task<bool> ExistsAsync(Guid id);
+    Task RemoveAsync(Guid id);
 }

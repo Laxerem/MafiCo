@@ -8,7 +8,7 @@ public class SettingsWindow : Window {
     public async override Task Show() {
         AnsiConsole.Console.Write(new FigletText("Settings"));
         await AppComponents.GiveChoice(new() {
-                // {"Настройки ботов", async () => }
+                {"Настройки ботов", async () => await SwitchTo<BotSettingsWindow>()},
                 {"Добавить ИИ модель", async () => await SwitchTo<LlmAddingWindow>()},
                 {"Изменить имя", async () => await SwitchTo<ChangeNameWindow>()},
                 {"Назад", async () => await SwitchTo<MenuWindow>()}

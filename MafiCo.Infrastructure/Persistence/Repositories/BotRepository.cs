@@ -1,5 +1,6 @@
 using MafiCo.Infrastructure.Interfaces;
 using MafiCo.Infrastructure.Persistence.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace MafiCo.Infrastructure.Persistence.Repositories;
 
@@ -17,5 +18,24 @@ public class BotRepository : IBotRepository {
 
     public async Task<BotEntity?> GetAsync(Guid id) {
         return await _context.Bots.FindAsync(id);
+    }
+
+    public async Task<List<BotEntity>> GetAllAsync() {
+        return await _context.Bots
+            .AsNoTracking()
+            .Include(x => x.Profile)
+            .Include(x => x.LlmEntity)
+            .ToListAsync();
+    }
+
+    public async Task<bool> ExistsAsync(Guid id) {
+        return await _context.Bots.AnyAsync(x => x.Id == id);
+    }
+
+    public async Task RemoveAsync(Guid id) {
+        var bot = await _context.Bots.FindAsync(id);
+        if (bot is not null) {
+            _context.Bots.Remove(bot);
+        }
     }
 }

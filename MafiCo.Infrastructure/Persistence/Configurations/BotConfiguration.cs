@@ -10,7 +10,6 @@ public class BotConfiguration : IEntityTypeConfiguration<BotEntity> {
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Id).ValueGeneratedNever();
         builder.Property(x => x.ProfileId).IsRequired();
-        builder.Property(x => x.LlmId).IsRequired();
 
         builder
             .HasOne(x => x.Profile)
@@ -22,6 +21,6 @@ public class BotConfiguration : IEntityTypeConfiguration<BotEntity> {
             .HasOne(x => x.LlmEntity)
             .WithMany()
             .HasForeignKey(x => x.LlmId)
-            .IsRequired();
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }

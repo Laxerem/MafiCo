@@ -13,5 +13,21 @@ public abstract class Window {
         await OnSwitchWindow?.Invoke(new SwitchWindowRequest(typeof(T)))!;
     }
 
+    /// <summary>
+    /// Выполняет действие, показывает результат (успех/ошибку) и возвращает пользователя на окно T.
+    /// </summary>
+    protected async Task RunAndReturnAsync<T>(Func<Task> action, string successMessage, string errorPrefix) where T : Window {
+        try {
+            await action();
+            AppComponents.WriteSuccess(successMessage);
+        }
+        catch (Exception ex) {
+            AppComponents.WriteError($"{errorPrefix}: {ex.Message}");
+        }
+
+        await Task.Delay(2000);
+        await SwitchTo<T>();
+    }
+
     public abstract Task Show();
 }

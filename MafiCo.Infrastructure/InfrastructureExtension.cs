@@ -9,5 +9,6 @@ public static class InfrastructureExtension {
         services.AddScoped<ProfileService>();
         services.AddScoped<LlmService>();
         services.AddScoped<GameService>();
+        services.AddScoped<BotService>();
     }
 }
