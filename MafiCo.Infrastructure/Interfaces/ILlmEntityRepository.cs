@@ -6,4 +6,7 @@ public interface ILlmEntityRepository {
     LlmEntity Add(LlmEntity llmEntity);
     void Update(LlmEntity llmEntity);
     Task<LlmEntity?> GetAsync(Guid id);
+    Task<List<LlmEntity>> GetAllAsync();
+    Task<bool> ExistsAsync(Guid id);
+    Task RemoveAsync(Guid id);
 }

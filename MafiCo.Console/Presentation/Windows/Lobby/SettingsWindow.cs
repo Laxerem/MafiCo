@@ -9,7 +9,7 @@ public class SettingsWindow : Window {
         AnsiConsole.Console.Write(new FigletText("Settings"));
         await AppComponents.GiveChoice(new() {
                 {"Настройки ботов", async () => await SwitchTo<BotSettingsWindow>()},
-                {"Добавить ИИ модель", async () => await SwitchTo<LlmAddingWindow>()},
+                {"Настройки ИИ моделей", async () => await SwitchTo<LlmSettingsWindow>()},
                 {"Изменить имя", async () => await SwitchTo<ChangeNameWindow>()},
                 {"Назад", async () => await SwitchTo<MenuWindow>()}
             }

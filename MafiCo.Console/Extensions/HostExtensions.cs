@@ -36,6 +36,7 @@ public static class HostExtensions {
         services.AddScoped<CreateBot>();
         services.AddScoped<DeleteBot>();
         services.AddScoped<ChangeBotModel>();
+        services.AddScoped<DeleteLlmModel>();
 
         return services;
     }
