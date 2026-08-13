@@ -7,6 +7,12 @@ using Spectre.Console;
 namespace MafiCo.Console.Presentation.Windows.Lobby;
 
 public class InitialWindow : Window {
+    private readonly CreateProfile _createProfile;
+
+    public InitialWindow(CreateProfile createProfile) {
+        _createProfile = createProfile;
+    }
+
     public async override Task Show() {
         try {
             await RenderAsync();
@@ -14,7 +20,7 @@ public class InitialWindow : Window {
         catch (DomainException ex) {
             await RenderAsync(ex);
         }
-        
+
         await Task.Delay(2000);
         await SwitchTo<MenuWindow>();
     }
@@ -25,14 +31,14 @@ public class InitialWindow : Window {
         if (error == null) {
             AnsiConsole.Clear();
             var result = await AppComponents.GetUserInput("What is your name?");
-            await UseAsync(new CreateProfile(result));
+            await _createProfile.ExecuteAsync(result);
             AppComponents.WriteSuccess("Profile Created!");
         }
         else {
             AnsiConsole.Clear();
             AppComponents.WriteError($"Error: {error.Message}");
             var result = await AppComponents.GetUserInput("What is your name?");
-            await UseAsync(new CreateProfile(result));
+            await _createProfile.ExecuteAsync(result);
         }
     }
 }
