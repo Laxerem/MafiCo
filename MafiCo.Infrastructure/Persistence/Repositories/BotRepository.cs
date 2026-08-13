@@ -28,6 +28,15 @@ public class BotRepository : IBotRepository {
             .ToListAsync();
     }
 
+    public async Task<List<BotEntity>> GetAllAvailableAsync() {
+        return await _context.Bots
+            .AsNoTracking()
+            .Where(x => x.LlmId != null)
+            .Include(x => x.Profile)
+            .Include(x => x.LlmEntity)
+            .ToListAsync();
+    }
+
     public async Task<bool> ExistsAsync(Guid id) {
         return await _context.Bots.AnyAsync(x => x.Id == id);
     }

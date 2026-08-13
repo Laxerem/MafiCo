@@ -35,7 +35,16 @@ public class BotService {
             .ToList();
     }
 
-    //Создание профиля здесь же
+    public async Task<List<BotDto>> GetAllAvailableBots() {
+        var bots = await _repository.GetAllAvailableAsync();
+        return bots
+            .Select(bot => new BotDto(
+                bot.Id,
+                new ProfileInfo(bot.Profile.Id, bot.Profile.Name),
+                LlmDto.FromEntity(bot.LlmEntity!)))
+            .ToList();
+    }
+    
     public async Task CreateBot(string name, Guid llmId) {
         await EnsureLlmExistsAsync(llmId);
 
