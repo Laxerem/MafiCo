@@ -2,6 +2,7 @@ using System.Runtime.CompilerServices;
 using MafiCo.Console;
 using MafiCo.Console.Configuration;
 using MafiCo.Console.Configuration.Options;
+using MafiCo.Console.Extensions;
 using MafiCo.Console.System;
 using MafiCo.Infrastructure;
 using MafiCo.Infrastructure.Interfaces;
@@ -18,7 +19,10 @@ var app = Host.CreateDefaultBuilder(args)
     .ConfigureAppConfiguration(cfg => {
         cfg.AddJsonFile(configPath, reloadOnChange: true, optional: false);
     })
-    .ConfigureLogging(logging => logging.AddFilter("Microsoft.EntityFrameworkCore", LogLevel.Error))
+    .ConfigureLogging(logging => {
+        logging.AddFilter("Microsoft.EntityFrameworkCore", LogLevel.Error);
+        logging.AddFilter("LuckyPennySoftware.MediatR.License", LogLevel.Error);
+    })
     .ConfigureServices((builder, services) => {
         services.AddDatabase();
         services.AddInfrastructure();
