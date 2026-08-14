@@ -1,13 +1,13 @@
 using MafiCo.Console.Configuration;
 using MafiCo.Console.Configuration.Options;
-using MafiCo.Infrastructure.Interfaces;
+using MafiCo.Infrastructure.Interfaces.Store;
 
-namespace MafiCo.Console.System;
+namespace MafiCo.Console.System.Stores;
 
-public class AppStore : IAppStore {
+public class UserStore : IUserStore {
     private readonly ConfigurationController _config;
     
-    public AppStore(ConfigurationController config) {
+    public UserStore(ConfigurationController config) {
         _config = config;
     }
     

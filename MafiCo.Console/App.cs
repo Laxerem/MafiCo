@@ -1,35 +1,35 @@
-using MafiCo.Console.Configuration.Options;
 using MafiCo.Console.Presentation;
 using MafiCo.Console.Presentation.Base;
 using MafiCo.Console.Presentation.Features.Menu;
 using MafiCo.Console.Presentation.Features.Profile;
 using MafiCo.Domain.AggregatesModel.ProfileAggregate;
-using MafiCo.Domain.DTOs;
+using MafiCo.Infrastructure.Interfaces;
+using MafiCo.Infrastructure.Interfaces.Store;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 
 namespace MafiCo.Console;
 
 public class App {
     private readonly IServiceProvider _services;
     private readonly IProfileRepository _profileRepository;
-    private readonly UserOptions _options;
+    private readonly IUserStore _store;
     
-    public App(IServiceProvider serviceProvider, IProfileRepository profileRepository, IOptions<UserOptions> options) {
+    public App(IServiceProvider serviceProvider, IProfileRepository profileRepository, IUserStore appStore) {
         _services = serviceProvider;
         _profileRepository = profileRepository;
-        _options = options.Value;
+        _store = appStore;
     }
 
     public async Task RunAsync() {
         Window? initialWindow = null;
-        if (_options.Id == null) {
+        var userId = _store.GetUserId();
+        if (userId == null) {
             initialWindow = _services.GetRequiredService<InitialWindow>();
         }
         else {
-            var userProfile = await _profileRepository.GetAsync(_options.Id.Value);
+            var userProfile = await _profileRepository.GetAsync(userId.Value);
             if (userProfile == null) {
-                throw new Exception($"Profile with id {_options.Id} not found");
+                throw new Exception($"Profile with id {userId.Value} not found");
             }
             initialWindow = new MenuWindow();
         }

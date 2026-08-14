@@ -3,15 +3,16 @@ using MafiCo.Domain.DTOs;
 using MafiCo.Domain.Exceptions;
 using MafiCo.Domain.SeedWork;
 using MafiCo.Infrastructure.Interfaces;
+using MafiCo.Infrastructure.Interfaces.Store;
 
 namespace MafiCo.Infrastructure.Services;
 
 public class ProfileService {
-    private readonly IAppStore _store;
+    private readonly IUserStore _store;
     private readonly IProfileRepository _repository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public ProfileService(IAppStore store, IProfileRepository repository, IUnitOfWork unitOfWork) {
+    public ProfileService(IUserStore store, IProfileRepository repository, IUnitOfWork unitOfWork) {
         _store = store;
         _repository = repository;
         _unitOfWork = unitOfWork;

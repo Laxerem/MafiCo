@@ -1,5 +1,6 @@
 using MafiCo.Domain.AggregatesModel.ProfileAggregate;
 using MafiCo.Infrastructure.Interfaces;
+using MafiCo.Infrastructure.Interfaces.Store;
 using DomainProfile = MafiCo.Domain.AggregatesModel.ProfileAggregate.Profile;
 
 namespace MafiCo.Console.Presentation.Features.Profile.UseCases;
@@ -7,10 +8,10 @@ namespace MafiCo.Console.Presentation.Features.Profile.UseCases;
 // TODO: Move to infrastructure
 public class CreateProfile {
     private readonly IProfileRepository _repository;
-    private readonly IAppStore _store;
+    private readonly IUserStore _store;
     private readonly IUnitOfWork _unitOfWork;
 
-    public CreateProfile(IProfileRepository repository, IAppStore store, IUnitOfWork unitOfWork) {
+    public CreateProfile(IProfileRepository repository, IUserStore store, IUnitOfWork unitOfWork) {
         _repository = repository;
         _store = store;
         _unitOfWork = unitOfWork;
