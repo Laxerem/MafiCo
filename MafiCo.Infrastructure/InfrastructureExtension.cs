@@ -10,5 +10,8 @@ public static class InfrastructureExtension {
         services.AddScoped<LlmService>();
         services.AddScoped<GameService>();
         services.AddScoped<BotService>();
+        services.AddMediatR(conf =>
+            conf.RegisterServicesFromAssembly(typeof(InfrastructureExtension).Assembly)
+        );
     }
 }

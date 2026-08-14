@@ -34,6 +34,8 @@ public static class HostExtensions {
         services.AddScoped<ChangeName>();
         services.AddScoped<CreateLlm>();
         services.AddScoped<GetGameSettings>();
+        services.AddScoped<GetPlayerController>();
+        services.AddScoped<GetRole>();
         services.AddScoped<GetBots>();
         services.AddScoped<GetLlmModels>();
         services.AddScoped<CreateBot>();
