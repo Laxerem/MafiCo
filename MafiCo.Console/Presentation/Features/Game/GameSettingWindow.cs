@@ -19,7 +19,7 @@ public class GameSettingWindow : Window {
         AnsiConsole.Console.Write(new FigletText("MafiCo"));
         var mafiaCount = int.Parse(await AppComponents.GetUserInput("Количество мафии"));
         processor.SetupMafiaCount(mafiaCount);
-        processor.StartGame();
+        await processor.StartGame();
         await SwitchTo<GameWindow>();
     }
 }

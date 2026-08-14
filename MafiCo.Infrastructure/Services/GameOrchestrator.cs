@@ -4,11 +4,10 @@ using MafiCo.Domain.Entities.Players;
 using MafiCo.Domain.Events.Game;
 using MafiCo.Infrastructure.Interfaces;
 using MafiCo.Infrastructure.Services.Processors;
-using MediatR;
 
 namespace MafiCo.Infrastructure.Services;
 
-public class GameOrchestrator : INotificationHandler<RolesAssignedEvent> {
+public class GameOrchestrator {
     private readonly IGameController _game;
     private readonly List<Guid> _playersIds;
     private readonly IUnitOfWork _unitOfWork;
@@ -25,11 +24,9 @@ public class GameOrchestrator : INotificationHandler<RolesAssignedEvent> {
         return new SettingProcessor(_game, _playersIds, _unitOfWork);
     }
 
-    public async Task<PlayerProcessor> GetControlProcessor(Guid playerId) {
-        return _processors[playerId];
-    }
+    public PlayerProcessor GetControlProcessor(Guid playerId) => _processors[playerId];
 
-    public Task Handle(RolesAssignedEvent notification, CancellationToken cancellationToken) {
+    public void SetRoles(RolesAssignedEvent notification) {
         foreach (var evt in notification.Events) {
             switch (evt.Role) {
                 case Role.Citizen:
@@ -40,6 +37,5 @@ public class GameOrchestrator : INotificationHandler<RolesAssignedEvent> {
                     break;
             }
         }
-        return Task.CompletedTask;
     }
 }

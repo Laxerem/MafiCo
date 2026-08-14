@@ -1,16 +1,19 @@
 using MafiCo.Domain.AggregatesModel.GameAggregate;
 using MafiCo.Infrastructure.Interfaces;
+using MafiCo.Infrastructure.Interfaces.Stores;
 
 namespace MafiCo.Infrastructure.Services;
 
 public class GameService {
     private readonly ProfileService _profileService;
     private readonly BotService _botService;
+    private readonly IGameStore _gameStore;
     private readonly IUnitOfWork _unitOfWork;
     
-    public GameService(ProfileService profileService, BotService botService, IUnitOfWork unitOfWork) {
+    public GameService(ProfileService profileService, BotService botService, IGameStore gameStore, IUnitOfWork unitOfWork) {
         _profileService = profileService;
         _botService = botService;
+        _gameStore = gameStore;
         _unitOfWork = unitOfWork;
     }
 
@@ -23,6 +26,8 @@ public class GameService {
         List<Guid> profilesIds = [userProfile.Id, ..botsIds];
 
         var game = new Game();
-        return new GameOrchestrator(game, profilesIds, _unitOfWork);
+        var orchestrator = new GameOrchestrator(game, profilesIds, _unitOfWork);
+        _gameStore.SetGame(orchestrator);
+        return orchestrator;
     }
 }

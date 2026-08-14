@@ -1,11 +1,19 @@
 using MafiCo.Console.Presentation.Base;
+using MafiCo.Console.Presentation.Features.Game.UseCases;
 using Spectre.Console;
 
 namespace MafiCo.Console.Presentation.Features.Game;
 
 public class GameWindow : Window {
+    private readonly GetPlayerController _getPlayerController;
+    public GameWindow(GetPlayerController getPlayerController) {
+        _getPlayerController = getPlayerController;
+    }
     public override Task Show() {
-        AnsiConsole.Console.Write("ИГРА НАЧАЛАСЬ");
+        AnsiConsole.Console.Write(new FigletText("MafiCo"));
+        var processor = _getPlayerController.Wait();
+        var role = processor.CheckRole();
+        AnsiConsole.Console.Write($"Роль: {role.ToString()}");
         return Task.CompletedTask;
     }
 }

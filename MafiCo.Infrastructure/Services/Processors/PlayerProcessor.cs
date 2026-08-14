@@ -19,5 +19,5 @@ public abstract class PlayerProcessor : IProcessor {
         _controller.Vote(_playerId, targetId);
     }
 
-    public Role CheckRole => _role;
+    public Role CheckRole() => _role;
 }
