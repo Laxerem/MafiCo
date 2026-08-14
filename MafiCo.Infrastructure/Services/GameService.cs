@@ -1,18 +1,20 @@
 using MafiCo.Domain.AggregatesModel.GameAggregate;
-using MafiCo.Infrastructure.Services.Controllers;
+using MafiCo.Infrastructure.Interfaces;
 
 namespace MafiCo.Infrastructure.Services;
 
 public class GameService {
     private readonly ProfileService _profileService;
     private readonly BotService _botService;
+    private readonly IUnitOfWork _unitOfWork;
     
-    public GameService(ProfileService profileService,  BotService botService) {
+    public GameService(ProfileService profileService, BotService botService, IUnitOfWork unitOfWork) {
         _profileService = profileService;
         _botService = botService;
+        _unitOfWork = unitOfWork;
     }
 
-    public async Task<PlayerController> Start() {
+    public async Task<GameOrchestrator> Start() {
         var userProfile = await _profileService.GetMe();
         if (userProfile is null) throw new Exception("User not found");
         var bots = await _botService.GetAllAvailableBots();
@@ -21,8 +23,6 @@ public class GameService {
         List<Guid> profilesIds = [userProfile.Id, ..botsIds];
 
         var game = new Game();
-        game.Setup(profilesIds, 1);
-        
-        return new PlayerController(userProfile.Id, game);
+        return new GameOrchestrator(game, profilesIds, _unitOfWork);
     }
 }
