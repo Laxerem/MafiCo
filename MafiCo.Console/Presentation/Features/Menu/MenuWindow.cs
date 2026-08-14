@@ -11,7 +11,7 @@ public class MenuWindow : Window{
     public async override Task Show() {
         AnsiConsole.Console.Write(new FigletText("MafiCo"));
         await AppComponents.GiveChoice(new () {
-            {"Играть", async () => await SwitchTo<GameWindow>()},
+            {"Играть", async () => await SwitchTo<GameSettingWindow>()},
             {"Настройки", async () => await SwitchTo<SettingsWindow>()},
             {"Выйти", () => throw new GameClosedException()}
         });

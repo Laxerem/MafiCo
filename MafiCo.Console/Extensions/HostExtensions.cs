@@ -33,7 +33,7 @@ public static class HostExtensions {
         services.AddScoped<CreateProfile>();
         services.AddScoped<ChangeName>();
         services.AddScoped<CreateLlm>();
-        services.AddScoped<StartGame>();
+        services.AddScoped<GetGameSettings>();
         services.AddScoped<GetBots>();
         services.AddScoped<GetLlmModels>();
         services.AddScoped<CreateBot>();
