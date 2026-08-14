@@ -1,3 +1,4 @@
+using MafiCo.Domain.AggregatesModel.GameAggregate.Interfaces;
 using MafiCo.Domain.AggregatesModel.ProfileAggregate;
 using MafiCo.Domain.DTOs;
 using MafiCo.Domain.Entities;
@@ -10,7 +11,7 @@ using MafiCo.Domain.SeedWork;
 
 namespace MafiCo.Domain.AggregatesModel.GameAggregate;
 
-public class Game : Entity, IAggregateRoot {
+public class Game : Entity, IAggregateRoot, IGameController {
     private readonly Dictionary<Guid, Player> _activePlayers;
     private readonly Dictionary<Guid, Player> _deathPlayers;
     private Voting? _voting;
@@ -49,7 +50,12 @@ public class Game : Entity, IAggregateRoot {
         }
 
         _status = GameStatus.Voting;
-        AddNotification(new RolesAssignedEvent());
+        AddNotification(new RolesAssignedEvent(
+            _activePlayers.Select(
+                pair => new AssignedData(pair.Key, pair.Value.GetRole())
+                ).ToList()
+            )
+        );
     }
 
     public void Vote(Guid voterId, Guid targetId) {
@@ -59,6 +65,15 @@ public class Game : Entity, IAggregateRoot {
         
         _activePlayers[voterId].Vote(targetId);
         AddNotification(new PlayerVotedEvent(voterId, targetId));
+    }
+
+    public Role CheckRole(Guid playerId) {
+        var player = _activePlayers[playerId] ?? _deathPlayers[playerId];
+        if (player == null) {
+            throw new DomainException("Player doesn't exist");
+        }
+
+        return player.GetRole();
     }
 
     public void Finish() {
