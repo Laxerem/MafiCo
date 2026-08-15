@@ -3,17 +3,30 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace MafiCo.Infrastructure.Persistence.Migrations
+namespace MafiCo.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class add_bots_table : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "LlmBots",
-                schema: "mafico");
+            migrationBuilder.EnsureSchema(
+                name: "mafico");
+
+            migrationBuilder.CreateTable(
+                name: "Games",
+                schema: "mafico",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    StartedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    FinishedAt = table.Column<DateTime>(type: "TEXT", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Games", x => x.Id);
+                });
 
             migrationBuilder.CreateTable(
                 name: "LlmData",
@@ -31,13 +44,28 @@ namespace MafiCo.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Profiles",
+                schema: "mafico",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", maxLength: 15, nullable: false),
+                    VictoriesCount = table.Column<int>(type: "INTEGER", nullable: false, defaultValue: 0),
+                    DefeatsCount = table.Column<int>(type: "INTEGER", nullable: false, defaultValue: 0)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Profiles", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Bots",
                 schema: "mafico",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     ProfileId = table.Column<Guid>(type: "TEXT", nullable: false),
-                    LlmId = table.Column<Guid>(type: "TEXT", nullable: false)
+                    LlmId = table.Column<Guid>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -48,7 +76,7 @@ namespace MafiCo.Infrastructure.Persistence.Migrations
                         principalSchema: "mafico",
                         principalTable: "LlmData",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_Bots_Profiles_ProfileId",
                         column: x => x.ProfileId,
@@ -79,23 +107,16 @@ namespace MafiCo.Infrastructure.Persistence.Migrations
                 schema: "mafico");
 
             migrationBuilder.DropTable(
+                name: "Games",
+                schema: "mafico");
+
+            migrationBuilder.DropTable(
                 name: "LlmData",
                 schema: "mafico");
 
-            migrationBuilder.CreateTable(
-                name: "LlmBots",
-                schema: "mafico",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
-                    ApiKey = table.Column<string>(type: "TEXT", nullable: false),
-                    ModelName = table.Column<string>(type: "TEXT", nullable: false),
-                    Url = table.Column<string>(type: "TEXT", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_LlmBots", x => x.Id);
-                });
+            migrationBuilder.DropTable(
+                name: "Profiles",
+                schema: "mafico");
         }
     }
 }

@@ -12,6 +12,8 @@ using MafiCo.Domain.SeedWork;
 namespace MafiCo.Domain.AggregatesModel.GameAggregate;
 
 public class Game : Entity, IAggregateRoot, IGameController {
+    public DateTime StartedAt { get; private set; }
+    public DateTime? FinishedAt { get; private set; }
     private readonly Dictionary<Guid, Player> _activePlayers;
     private readonly Dictionary<Guid, Player> _deathPlayers;
     private Voting? _voting;
@@ -50,12 +52,13 @@ public class Game : Entity, IAggregateRoot, IGameController {
         }
 
         _status = GameStatus.Voting;
-        AddNotification(new RolesAssignedEvent(
-            _activePlayers.Select(
-                pair => new AssignedData(pair.Key, pair.Value.GetRole())
-                ).ToList()
-            )
+        StartedAt = DateTime.UtcNow;
+        
+        var @event = new RolesAssignedEvent(
+            _activePlayers.Select(pair => new AssignedData(pair.Key, pair.Value.GetRole())
+            ).ToList()
         );
+        AddNotification(@event);
     }
 
     public void Vote(Guid voterId, Guid targetId) {

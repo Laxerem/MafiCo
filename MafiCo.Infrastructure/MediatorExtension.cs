@@ -1,4 +1,5 @@
 using MafiCo.Domain.SeedWork;
+using MafiCo.Infrastructure.Persistence;
 using MediatR;
 
 namespace MafiCo.Infrastructure;

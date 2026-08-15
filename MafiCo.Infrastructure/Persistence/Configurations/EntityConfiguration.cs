@@ -2,7 +2,7 @@ using MafiCo.Domain.SeedWork;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace MafiCo.Infrastructure.Configurations;
+namespace MafiCo.Infrastructure.Persistence.Configurations;
 
 public abstract class EntityConfiguration<T> : IEntityTypeConfiguration<T> where T : Entity {
     

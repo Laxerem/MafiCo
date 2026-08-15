@@ -27,7 +27,6 @@ var app = Host.CreateDefaultBuilder(args)
         logging.AddFilter("LuckyPennySoftware.MediatR.License", LogLevel.Error);
     })
     .ConfigureServices((builder, services) => {
-        services.AddDatabase();
         services.AddInfrastructure();
         services.ConfigureServices(builder.Configuration);
         services.AddUi();

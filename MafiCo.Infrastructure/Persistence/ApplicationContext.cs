@@ -1,15 +1,15 @@
-﻿using MafiCo.Domain.AggregatesModel.LlmBotAggregate;
+﻿using MafiCo.Domain.AggregatesModel.GameAggregate;
 using MafiCo.Domain.AggregatesModel.ProfileAggregate;
 using MafiCo.Infrastructure.Configurations;
 using MafiCo.Infrastructure.Persistence.Configurations;
 using MafiCo.Infrastructure.Persistence.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.Extensions.Logging;
 
-namespace MafiCo.Infrastructure;
+namespace MafiCo.Infrastructure.Persistence;
 
 public class ApplicationContext : DbContext {
+    public DbSet<Game> Games { get; set; }
     public DbSet<Profile> Profiles { get; set; }
     public DbSet<LlmEntity> LlmBots { get; set; }
     public DbSet<BotEntity> Bots { get; set; }
@@ -55,6 +55,7 @@ public class ApplicationContext : DbContext {
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         modelBuilder.HasDefaultSchema("mafico");
+        modelBuilder.ApplyConfiguration(new GameConfiguration());
         modelBuilder.ApplyConfiguration(new ProfileConfiguration());
         modelBuilder.ApplyConfiguration(new LlmEntityConfiguration());
         modelBuilder.ApplyConfiguration(new BotConfiguration());

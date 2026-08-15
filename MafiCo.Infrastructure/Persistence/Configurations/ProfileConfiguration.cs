@@ -1,4 +1,5 @@
 using MafiCo.Domain.AggregatesModel.ProfileAggregate;
+using MafiCo.Infrastructure.Persistence.Configurations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

@@ -1,3 +1,4 @@
+using MafiCo.Domain.AggregatesModel.GameAggregate;
 using MafiCo.Domain.AggregatesModel.GameAggregate.Interfaces;
 using MafiCo.Domain.AggregatesModel.GameAggregate.Interfaces.Controllers;
 using MafiCo.Domain.Entities.Players;
@@ -14,9 +15,9 @@ public class GameOrchestrator {
     private readonly Dictionary<Guid, PlayerProcessor> _processors;
     
     public GameOrchestrator(IGameController gameController, List<Guid> playersIds, IUnitOfWork unitOfWork) {
+        _game = gameController;
         _playersIds = playersIds;
         _processors = new Dictionary<Guid, PlayerProcessor>();
-        _game = gameController;
         _unitOfWork = unitOfWork;
     }
 

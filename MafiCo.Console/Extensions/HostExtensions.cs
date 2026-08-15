@@ -6,12 +6,6 @@ using MafiCo.Console.Presentation.Features.Bots.UseCases;
 using MafiCo.Console.Presentation.Features.Game.UseCases;
 using MafiCo.Console.Presentation.Features.Llm.UseCases;
 using MafiCo.Console.Presentation.Features.Profile.UseCases;
-using MafiCo.Domain.AggregatesModel.LlmBotAggregate;
-using MafiCo.Domain.AggregatesModel.ProfileAggregate;
-using MafiCo.Infrastructure;
-using MafiCo.Infrastructure.Interfaces;
-using MafiCo.Infrastructure.Persistence;
-using MafiCo.Infrastructure.Persistence.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -49,15 +43,6 @@ public static class HostExtensions {
     public static IServiceCollection ConfigureServices(this IServiceCollection services, IConfiguration configuration) {
         services.Configure<UserOptions>(configuration.GetSection("User"));
         services.Configure<GlobalConfigOption>(configuration);
-        return services;
-    }
-
-    public static IServiceCollection AddDatabase(this IServiceCollection services) {
-        services.AddDbContext<ApplicationContext>();
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
-        services.AddScoped<IProfileRepository, ProfileRepository>();
-        services.AddScoped<ILlmEntityRepository, LlmEntityRepository>();
-        services.AddScoped<IBotRepository, BotRepository>();
         return services;
     }
 }
