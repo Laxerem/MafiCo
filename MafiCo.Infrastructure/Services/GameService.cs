@@ -26,10 +26,10 @@ public class GameService {
         var bots = await _botService.GetAllAvailableBots();
         var botsIds = bots.Select(x => x.Id).ToList();
 
-        List<Guid> profilesIds = [userProfile.Id, ..botsIds];
+        HashSet<Guid> profilesIds = [userProfile.Id, ..botsIds];
 
-        var game = new Game();
-        var orchestrator = new GameOrchestrator(game, profilesIds, _unitOfWork);
+        var game = new Game(profilesIds);
+        var orchestrator = new GameOrchestrator(game, _unitOfWork);
         _gameStore.SetGame(orchestrator);
         _gameRepository.Add(game);
         return orchestrator;

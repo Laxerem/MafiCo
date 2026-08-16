@@ -10,19 +10,19 @@ namespace MafiCo.Infrastructure.Services;
 
 public class GameOrchestrator {
     private readonly IGameController _game;
-    private readonly List<Guid> _playersIds;
+    private readonly HashSet<Guid> _playersIds;
     private readonly IUnitOfWork _unitOfWork;
     private readonly Dictionary<Guid, PlayerProcessor> _processors;
     
-    public GameOrchestrator(IGameController gameController, List<Guid> playersIds, IUnitOfWork unitOfWork) {
+    public GameOrchestrator(IGameController gameController, IUnitOfWork unitOfWork) {
         _game = gameController;
-        _playersIds = playersIds;
+        _playersIds = gameController.GetAllPlayers();
         _processors = new Dictionary<Guid, PlayerProcessor>();
         _unitOfWork = unitOfWork;
     }
 
     public SettingProcessor GetSettingProcessor() {
-        return new SettingProcessor(_game, _playersIds, _unitOfWork);
+        return new SettingProcessor(_game, _unitOfWork);
     }
 
     public PlayerProcessor GetControlProcessor(Guid playerId) => _processors[playerId];

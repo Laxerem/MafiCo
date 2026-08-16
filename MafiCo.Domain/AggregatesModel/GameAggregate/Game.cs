@@ -14,23 +14,27 @@ namespace MafiCo.Domain.AggregatesModel.GameAggregate;
 public class Game : Entity, IAggregateRoot, IGameController {
     public DateTime StartedAt { get; private set; }
     public DateTime? FinishedAt { get; private set; }
+    private readonly HashSet<Guid> _playerIds;
     private readonly Dictionary<Guid, Player> _activePlayers;
     private readonly Dictionary<Guid, Player> _deathPlayers;
     private Voting? _voting;
     private GameStatus _status;
 
-    public Game() : base(Guid.NewGuid()) {
+    private Game() : base(Guid.NewGuid()) {}
+
+    public Game(HashSet<Guid> playerIds) : base(Guid.NewGuid()) {
         _activePlayers = new Dictionary<Guid, Player>();
         _deathPlayers = new Dictionary<Guid, Player>();
+        _playerIds = playerIds;
         _status = GameStatus.Setting;
     }
 
-    public void Setup(IEnumerable<Guid> playerIds, int mafiaCount) {
+    public void Setup(int mafiaCount) {
         if (_status != GameStatus.Setting) {
             throw new DomainException("Game is already started");
         }
 
-        var ids = playerIds.ToList();
+        var ids = _playerIds;
         var uniquePlayers = new HashSet<Guid>(ids);
         if (uniquePlayers.Count != ids.Count) {
             throw new DomainException("Player list contains duplicate players");
@@ -69,6 +73,8 @@ public class Game : Entity, IAggregateRoot, IGameController {
         _activePlayers[voterId].Vote(targetId);
         AddNotification(new PlayerVotedEvent(voterId, targetId));
     }
+
+    public HashSet<Guid> GetAllPlayers() => _playerIds;
 
     public Role CheckRole(Guid playerId) {
         var player = _activePlayers[playerId] ?? _deathPlayers[playerId];
