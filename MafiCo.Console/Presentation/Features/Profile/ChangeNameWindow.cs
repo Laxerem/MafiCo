@@ -1,23 +1,24 @@
 using MafiCo.Console.Presentation.Base;
 using MafiCo.Console.Presentation.Extensions;
 using MafiCo.Console.Presentation.Features.Menu;
-using MafiCo.Console.Presentation.Features.Profile.UseCases;
-using Spectre.Console;
+using MafiCo.Infrastructure.MediatR.Profile.Commands;
+using MediatR;
 
 namespace MafiCo.Console.Presentation.Features.Profile;
 
 public class ChangeNameWindow : Window {
-    private readonly ChangeName _changeName;
+    private readonly IMediator _mediator;
 
-    public ChangeNameWindow(ChangeName changeName) {
-        _changeName = changeName;
+    public ChangeNameWindow(IMediator mediator) {
+        _mediator = mediator;
     }
 
     public async override Task Show() {
-        var result = await AppComponents.GetUserInput("Новое имя");
-        await _changeName.ExecuteAsync(result);
-        AppComponents.WriteSuccess("Имя изменено!");
-        await Task.Delay(2000);
-        await SwitchTo<SettingsWindow>();
+        var newName = await AppComponents.GetUserInput("Новое имя");
+
+        await RunAndReturnAsync<SettingsWindow>(
+            () => _mediator.Send(new ChangeProfileNameCommand(newName)),
+            "Имя изменено!",
+            "Не удалось изменить имя");
     }
 }
