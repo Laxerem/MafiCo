@@ -1,5 +1,4 @@
-using MafiCo.Domain.AggregatesModel.ProfileAggregate;
-using MafiCo.Domain.Entities.Players;
+using MafiCo.Domain.AggregatesModel.GameAggregate;
 
 namespace MafiCo.Domain.DTOs;
 

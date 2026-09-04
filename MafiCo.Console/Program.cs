@@ -3,13 +3,9 @@ using MafiCo.Console;
 using MafiCo.Console.Configuration;
 using MafiCo.Console.Configuration.Options;
 using MafiCo.Console.Extensions;
-using MafiCo.Console.System;
 using MafiCo.Console.System.Stores;
 using MafiCo.Infrastructure;
-using MafiCo.Infrastructure.Interfaces;
 using MafiCo.Infrastructure.Interfaces.Store;
-using MafiCo.Infrastructure.Interfaces.Stores;
-using MafiCo.Infrastructure.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -33,7 +29,7 @@ var app = Host.CreateDefaultBuilder(args)
         services.AddScoped<ConfigurationController>(sp =>
             new ConfigurationController(configPath, sp.GetRequiredService<IOptions<GlobalConfigOption>>()));
         services.AddScoped<IUserStore, UserStore>();
-        services.AddScoped<IGameStore, GameStore>();
+        // services.AddScoped<IGameStore, GameStore>();
         services.AddScoped<App>();
     })
     .Build();

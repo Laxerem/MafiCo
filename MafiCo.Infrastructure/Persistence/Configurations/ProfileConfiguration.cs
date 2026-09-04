@@ -1,9 +1,8 @@
 using MafiCo.Domain.AggregatesModel.ProfileAggregate;
-using MafiCo.Infrastructure.Persistence.Configurations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace MafiCo.Infrastructure.Configurations;
+namespace MafiCo.Infrastructure.Persistence.Configurations;
 
 public class ProfileConfiguration : EntityConfiguration<Profile> {
     public override void Configure(EntityTypeBuilder<Profile> builder) {

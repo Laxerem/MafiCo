@@ -1,8 +1,8 @@
-﻿using MafiCo.Domain.AggregatesModel.GameAggregate;
+﻿using MafiCo.Domain.AggregatesModel.BotAggregate;
+using MafiCo.Domain.AggregatesModel.GameAggregate;
+using MafiCo.Domain.AggregatesModel.LlmAggregate;
 using MafiCo.Domain.AggregatesModel.ProfileAggregate;
-using MafiCo.Infrastructure.Configurations;
 using MafiCo.Infrastructure.Persistence.Configurations;
-using MafiCo.Infrastructure.Persistence.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
@@ -11,8 +11,8 @@ namespace MafiCo.Infrastructure.Persistence;
 public class ApplicationContext : DbContext {
     public DbSet<Game> Games { get; set; }
     public DbSet<Profile> Profiles { get; set; }
-    public DbSet<LlmEntity> LlmBots { get; set; }
-    public DbSet<BotEntity> Bots { get; set; }
+    public DbSet<Llm> LlmBots { get; set; }
+    public DbSet<Bot> Bots { get; set; }
     private IDbContextTransaction? _currentTransaction = null;
 
     public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options) {
@@ -57,7 +57,7 @@ public class ApplicationContext : DbContext {
         modelBuilder.HasDefaultSchema("mafico");
         modelBuilder.ApplyConfiguration(new GameConfiguration());
         modelBuilder.ApplyConfiguration(new ProfileConfiguration());
-        modelBuilder.ApplyConfiguration(new LlmEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new LlmConfiguration());
         modelBuilder.ApplyConfiguration(new BotConfiguration());
     }
 
