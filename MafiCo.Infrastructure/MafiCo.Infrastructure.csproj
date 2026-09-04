@@ -16,6 +16,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\MafiCo.Application\MafiCo.Application.csproj" />
       <ProjectReference Include="..\MafiCo.Domain\MafiCo.Domain.csproj" />
     </ItemGroup>
 
