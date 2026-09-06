@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using MafiCo.Application;
 using MafiCo.Application.Interfaces.Stores;
 using MafiCo.Console;
 using MafiCo.Console.Configuration;
@@ -23,6 +24,7 @@ var app = Host.CreateDefaultBuilder(args)
         logging.AddFilter("LuckyPennySoftware.MediatR.License", LogLevel.Error);
     })
     .ConfigureServices((builder, services) => {
+        services.AddApplication();
         services.AddInfrastructure();
         services.ConfigureServices(builder.Configuration);
         services.AddUi();

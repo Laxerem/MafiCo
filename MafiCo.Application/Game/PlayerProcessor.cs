@@ -1,27 +1,25 @@
-using MafiCo.Application.Abstractions;
 using MafiCo.Application.Game.Contexts;
+using MafiCo.Application.Interfaces;
 using MediatR;
 
 namespace MafiCo.Application.Game;
 
 public class PlayerProcessor {
-    private readonly GameContext _context;
-    private readonly PlayerInterface _interface;
-    
-    public PlayerProcessor(GameContext context, PlayerInterface playerInterface) {
-        _context = context;
-        _interface = playerInterface;
+    public readonly PlayerContext Context;
+    protected readonly IEventSource _eventSource;
+
+    public PlayerProcessor(IEventSource eventEventSource) {
+        Context = new PlayerContext();
+        _eventSource = eventEventSource;
     }
 
-    public async Task RunAsync() {
-        
+    public async Task RunAsync() {}
+
+    public void SendNotify(INotification notification) {
+        Context.AddNotification(notification);
     }
 
     public void Stop() {
-        
-    }
-
-    private void HandleEvent(INotification evt) {
         
     }
 }
