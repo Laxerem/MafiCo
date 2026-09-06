@@ -8,4 +8,4 @@ public record CreateLlmCommand(
     string ModelName,
     string Url,
     string ApiKey
-) : IAppCommand;
+) : IUserCommand;

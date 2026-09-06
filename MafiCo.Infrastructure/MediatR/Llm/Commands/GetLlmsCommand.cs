@@ -4,4 +4,4 @@ using MafiCo.Infrastructure.Interfaces;
 
 namespace MafiCo.Infrastructure.MediatR.Llm.Commands;
 
-public record GetLlmsCommand() : IAppCommand<List<LlmDto>>;
+public record GetLlmsCommand() : IUserCommand<List<LlmDto>>;
