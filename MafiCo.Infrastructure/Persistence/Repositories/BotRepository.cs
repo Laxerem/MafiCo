@@ -32,6 +32,10 @@ public class BotRepository : IBotRepository {
             .ToListAsync();
     }
 
+    public async Task<bool> ExistsByProfileIdAsync(Guid profileId) {
+        return await _context.Bots.AnyAsync(x => x.ProfileId == profileId);
+    }
+
     public async Task<bool> ExistsAsync(Guid id) {
         return await _context.Bots.AnyAsync(x => x.Id == id);
     }

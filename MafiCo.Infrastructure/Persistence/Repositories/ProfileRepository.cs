@@ -18,6 +18,10 @@ public class ProfileRepository : IProfileRepository {
         _context.Entry(profile).State = EntityState.Modified;
     }
 
+    public bool Exists(Guid id) {
+        return _context.Profiles.Any(e => e.Id == id);
+    }
+
     public async Task<Profile?> GetAsync(Guid id) {
         return await _context.Profiles.FindAsync(id);
     }
