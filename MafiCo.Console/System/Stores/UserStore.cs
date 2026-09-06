@@ -1,6 +1,6 @@
+using MafiCo.Application.Interfaces.Stores;
 using MafiCo.Console.Configuration;
 using MafiCo.Console.Configuration.Options;
-using MafiCo.Infrastructure.Interfaces.Store;
 
 namespace MafiCo.Console.System.Stores;
 

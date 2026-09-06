@@ -1,7 +1,7 @@
+using MafiCo.Application.Interfaces.Stores;
 using MafiCo.Domain.AggregatesModel.ProfileAggregate;
 using MafiCo.Domain.Exceptions;
 using MafiCo.Infrastructure.Interfaces;
-using MafiCo.Infrastructure.Interfaces.Store;
 using MafiCo.Infrastructure.MediatR.Profile.Commands;
 using MediatR;
 

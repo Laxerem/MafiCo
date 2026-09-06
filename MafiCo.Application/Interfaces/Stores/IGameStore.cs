@@ -1,4 +1,4 @@
-namespace MafiCo.Infrastructure.Interfaces.Stores;
+namespace MafiCo.Application.Interfaces.Stores;
 
 // public interface IGameStore {
 //     void SetGame(GameOrchestrator game);

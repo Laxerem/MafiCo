@@ -1,6 +1,6 @@
+using MafiCo.Application.Interfaces.Stores;
 using MafiCo.Domain.AggregatesModel.ProfileAggregate;
 using MafiCo.Infrastructure.Interfaces;
-using MafiCo.Infrastructure.Interfaces.Store;
 using MafiCo.Infrastructure.MediatR.Profile.Commands;
 using MediatR;
 using DomainProfile = MafiCo.Domain.AggregatesModel.ProfileAggregate.Profile;

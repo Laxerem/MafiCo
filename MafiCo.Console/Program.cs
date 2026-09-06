@@ -1,11 +1,11 @@
 using System.Runtime.CompilerServices;
+using MafiCo.Application.Interfaces.Stores;
 using MafiCo.Console;
 using MafiCo.Console.Configuration;
 using MafiCo.Console.Configuration.Options;
 using MafiCo.Console.Extensions;
 using MafiCo.Console.System.Stores;
 using MafiCo.Infrastructure;
-using MafiCo.Infrastructure.Interfaces.Store;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
