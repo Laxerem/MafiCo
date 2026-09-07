@@ -30,7 +30,7 @@ public class StartGameHandler : IRequestHandler<StartGameCommand, PlayerContext>
         await gameOrchestrator.Initialize(profileIds);
         _gameContext.Initialize(game, gameOrchestrator);
 
-        await gameOrchestrator.StartAsync(request.MafiaCount);
+        await Task.Run(() => Task.FromResult(gameOrchestrator.StartAsync(request.MafiaCount)), cancellationToken);
         
         var userId = _store.GetUserId();
         return gameOrchestrator.GetPlayerContext(userId!.Value);

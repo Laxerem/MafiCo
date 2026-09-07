@@ -2,6 +2,9 @@ using MafiCo.Application.Game;
 using MafiCo.Application.Game.Contexts;
 using MafiCo.Application.Interfaces;
 using MafiCo.Application.Notifications;
+using MafiCo.Application.Notifications.GameNotifications;
+using MafiCo.Domain.AggregatesModel.GameAggregate.Items;
+using MafiCo.Infrastructure.Controllers;
 using MafiCo.Infrastructure.MediatR.System;
 using MediatR;
 using GameAggregate = MafiCo.Domain.AggregatesModel.GameAggregate.Game;
@@ -38,7 +41,25 @@ public class GameOrchestrator : IGameOrchestrator {
         }
         _game.AssignRoles(mafiaCount);
         foreach (var pair in _processors) {
-            pair.Value.SendNotify(new RoleAssignedNotification(_game.CheckRole(pair.Key)));
+            await pair.Value.SendNotify(new RoleAssignedNotification(_game.CheckRole(pair.Key)));
+        }
+        
+        while (true) {
+            await _eventConsumer.SendEvent(new PhaseChangedNotification(_game.Phase));
+            await ProcessPhase(_game.Phase);
+            await Task.Delay(TimeSpan.FromSeconds(10));
+        }
+    }
+
+    private async Task ProcessPhase(GamePhase phase) {
+        switch (phase) {
+            case GamePhase.Day:
+                foreach (var pair in _processors) {
+                    var playerId = pair.Key;
+                    var processor = pair.Value;
+                    await processor.SendNotify(new ControllerChangedNotification(new DefaultController(playerId, _mediator)));
+                }
+                break;
         }
     }
 
