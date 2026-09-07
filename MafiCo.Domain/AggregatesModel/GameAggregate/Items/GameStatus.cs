@@ -1,4 +1,4 @@
-namespace MafiCo.Domain.AggregatesModel.GameAggregate;
+namespace MafiCo.Domain.AggregatesModel.GameAggregate.Items;
 
 public enum GameStatus {
     Setting,

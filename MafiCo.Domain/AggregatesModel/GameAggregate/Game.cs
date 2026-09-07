@@ -1,4 +1,5 @@
 using MafiCo.Domain.AggregatesModel.GameAggregate.Events;
+using MafiCo.Domain.AggregatesModel.GameAggregate.Items;
 using MafiCo.Domain.DTOs;
 using MafiCo.Domain.Interfaces;
 using MafiCo.Domain.SeedWork;
@@ -14,7 +15,7 @@ public class Game : Entity, IAggregateRoot {
     private readonly Dictionary<Guid, Player> _deadPlayers = new();
     private Voting? _voting;
     private GameStatus _status;
-    private GamePhase _phase;
+    public GamePhase Phase { get; private set; }
 
     private Game() : base(Guid.NewGuid()) {
         _playerIds = new HashSet<Guid>();
@@ -46,14 +47,14 @@ public class Game : Entity, IAggregateRoot {
         }
 
         _status = GameStatus.Running;
-        _phase = GamePhase.Voting;
+        Phase = GamePhase.Day;
         _voting = new Voting();
         StartedAt = DateTime.UtcNow;
     }
 
     public void MakeVote(Guid playerId, Guid targetId) {
         EnsureRunning();
-        if (_phase != GamePhase.Voting) {
+        if (Phase != GamePhase.Day) {
             throw new DomainException("Voting is not the current phase");
         }
         if (!IsAlive(playerId)) throw new DomainException("Voter is not an active player");
@@ -65,13 +66,13 @@ public class Game : Entity, IAggregateRoot {
     public void NextPhase() {
         EnsureRunning();
 
-        if (_phase == GamePhase.Voting) {
+        if (Phase == GamePhase.Day) {
             ResolveVoting();
             if (TryFinish()) return;
-            _phase = GamePhase.Discussion;
+            Phase = GamePhase.Night;
         }
         else {
-            _phase = GamePhase.Voting;
+            Phase = GamePhase.Day;
             _voting = new Voting();
         }
     }
@@ -95,7 +96,7 @@ public class Game : Entity, IAggregateRoot {
         _activePlayers.Remove(victim.Id);
         _deadPlayers.Add(victim.Id, victim);
 
-        AddNotification(new PlayerKilledEvent(victim.Id, victim.Role!.Value));
+        AddNotification(new PlayerKilledDomainEvent(victim.Id, victim.Role!.Value));
     }
 
     private bool TryFinish() {
