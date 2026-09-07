@@ -1,14 +1,18 @@
 using MafiCo.Application.Interfaces;
+using MafiCo.Application.Interfaces.Notifications;
+using MafiCo.Domain.AggregatesModel.GameAggregate;
+using MafiCo.Domain.AggregatesModel.GameAggregate.Events;
 using MafiCo.Domain.Interfaces;
+using MafiCo.Domain.SeedWork;
 using MediatR;
 using GameEntity = MafiCo.Domain.AggregatesModel.GameAggregate.Game;
 namespace MafiCo.Application.Game.Contexts;
 
-public class GameContext : INotificationHandler<IDomainEvent>, IEventSource, IEventConsumer {
+public class GameContext : INotificationHandler<IGameDomainEvent>, IEventSource, IEventConsumer {
     private bool _isInitialized;
     private GameEntity? _game;
     private IGameOrchestrator? _gameOrchestrator;
-    public event Action<INotification> OnNotification;
+    public event Func<IGameNotification, Task> OnNotification;
 
     public GameContext() {
         _isInitialized = false;
@@ -35,13 +39,16 @@ public class GameContext : INotificationHandler<IDomainEvent>, IEventSource, IEv
         _isInitialized = false;
     }
 
-    public Task Handle(IDomainEvent notification, CancellationToken cancellationToken) {
-        OnNotification?.Invoke(notification);
-        return Task.CompletedTask;
+    public Task Handle(IGameDomainEvent notification, CancellationToken cancellationToken) {
+        // switch (notification) {
+        //     case GameFinishedEvent gameEvent:
+        // }
+        // OnNotification?.Invoke(notification);
+        // return Task.CompletedTask;
+        throw new NotImplementedException();
     }
 
-    public Task SendEvent(INotification notification) {
-        OnNotification.Invoke(notification);
-        return Task.CompletedTask;
+    public async Task SendEvent(IGameNotification domainEvent) {
+        await OnNotification.Invoke(domainEvent);
     }
 }
