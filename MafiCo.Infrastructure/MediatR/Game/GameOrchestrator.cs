@@ -14,9 +14,10 @@ public class GameOrchestrator : IGameOrchestrator {
     private readonly GameAggregate _game;
     private readonly Dictionary<Guid, PlayerProcessor> _processors;
     
-    public GameOrchestrator(IEventConsumer eventConsumer, IMediator mediator) {
+    public GameOrchestrator(GameAggregate game, IEventConsumer eventConsumer, IMediator mediator) {
         _mediator = mediator;
         _eventConsumer = eventConsumer;
+        _game = game;
         _processors = new Dictionary<Guid, PlayerProcessor>();
     }
 

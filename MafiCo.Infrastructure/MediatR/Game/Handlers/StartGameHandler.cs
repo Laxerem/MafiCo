@@ -1,4 +1,3 @@
-using MafiCo.Application.Game;
 using MafiCo.Application.Game.Contexts;
 using MafiCo.Application.Interfaces.Stores;
 using MafiCo.Domain.AggregatesModel.ProfileAggregate;
@@ -27,10 +26,10 @@ public class StartGameHandler : IRequestHandler<StartGameCommand, PlayerContext>
 
         var game = new GameAggregate(profileIds);
         
-        var gameOrchestrator = new GameOrchestrator(_gameContext, _mediator);
+        var gameOrchestrator = new GameOrchestrator(game, _gameContext, _mediator);
         await gameOrchestrator.Initialize(profileIds);
         _gameContext.Initialize(game, gameOrchestrator);
-        
+
         await gameOrchestrator.StartAsync(request.MafiaCount);
         
         var userId = _store.GetUserId();
