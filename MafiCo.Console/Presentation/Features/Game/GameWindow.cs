@@ -17,10 +17,12 @@ public class GameWindow : Window {
         int mafiaCount = int.Parse(userInput);
         
         var playerContext = await _mediator.Send(new StartGameCommand(mafiaCount));
-        playerContext.OnNotification += OnNotification;
+        await foreach (var notify in playerContext.EventsReader.ReadAllAsync()) {
+            HandleNotification(notify);
+        }
     }
 
-    private void OnNotification(INotification notification) {
+    private void HandleNotification(INotification notification) {
         AnsiConsole.Console.Write(NotificationBuilder.Build(notification));
     }
 }
