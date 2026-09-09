@@ -1,7 +1,6 @@
+using MafiCo.Domain.AggregatesModel.GameAggregate;
 using MediatR;
 
-namespace MafiCo.Domain.Interfaces;
+namespace MafiCo.Domain.SeedWork;
 
-public interface IDomainEvent : INotification {
-    
-}
+public interface IDomainEvent : INotification {}

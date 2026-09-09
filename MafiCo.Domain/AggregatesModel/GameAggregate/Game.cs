@@ -1,113 +1,144 @@
-using MafiCo.Domain.AggregatesModel.GameAggregate.Interfaces;
-using MafiCo.Domain.AggregatesModel.ProfileAggregate;
+using MafiCo.Domain.AggregatesModel.GameAggregate.Events;
+using MafiCo.Domain.AggregatesModel.GameAggregate.Items;
 using MafiCo.Domain.DTOs;
-using MafiCo.Domain.Entities;
-using MafiCo.Domain.Entities.Players;
-using MafiCo.Domain.Events;
-using MafiCo.Domain.Events.Game;
-using MafiCo.Domain.Events.Players;
 using MafiCo.Domain.Interfaces;
 using MafiCo.Domain.SeedWork;
 
 namespace MafiCo.Domain.AggregatesModel.GameAggregate;
 
-public class Game : Entity, IAggregateRoot, IGameController {
+public class Game : Entity, IAggregateRoot {
     public DateTime StartedAt { get; private set; }
     public DateTime? FinishedAt { get; private set; }
+
     private readonly HashSet<Guid> _playerIds;
-    private readonly Dictionary<Guid, Player> _activePlayers;
-    private readonly Dictionary<Guid, Player> _deathPlayers;
+    private readonly Dictionary<Guid, Player> _activePlayers = new();
+    private readonly Dictionary<Guid, Player> _deadPlayers = new();
     private Voting? _voting;
     private GameStatus _status;
+    public GamePhase Phase { get; private set; }
 
-    private Game() : base(Guid.NewGuid()) {}
+    private Game() : base(Guid.NewGuid()) {
+        _playerIds = new HashSet<Guid>();
+    }
 
     public Game(HashSet<Guid> playerIds) : base(Guid.NewGuid()) {
-        _activePlayers = new Dictionary<Guid, Player>();
-        _deathPlayers = new Dictionary<Guid, Player>();
         _playerIds = playerIds;
         _status = GameStatus.Setting;
     }
 
-    public void Setup(int mafiaCount) {
+    public void AssignRoles(int mafiaCount) {
         if (_status != GameStatus.Setting) {
-            throw new DomainException("Game is already started");
+            throw new DomainException("Roles are already assigned");
         }
-
-        var ids = _playerIds;
-        var uniquePlayers = new HashSet<Guid>(ids);
-        if (uniquePlayers.Count != ids.Count) {
-            throw new DomainException("Player list contains duplicate players");
-        }
-        if (uniquePlayers.Count <= 3) {
+        if (_playerIds.Count <= 3) {
             throw new DomainException("Players count must be 4 or more players.");
         }
-        if (mafiaCount >= uniquePlayers.Count) {
-            throw new DomainException("Mafia players count exceeds or equally player count");
+        if (mafiaCount >= _playerIds.Count) {
+            throw new DomainException("Mafia players count exceeds or equals player count");
         }
 
         var random = new Random();
-        var shuffled = uniquePlayers.OrderBy(_ => random.Next()).ToList();
+        var shuffled = _playerIds.OrderBy(_ => random.Next()).ToList();
 
-        for (int i = 0; i < shuffled.Count; i++) {
-            var playerId = shuffled[i];
-            Player player = i < mafiaCount ? new Mafia(playerId) : new Citizen(playerId);
-            _activePlayers.Add(playerId, player);
+        for (var i = 0; i < shuffled.Count; i++) {
+            var player = new Player(shuffled[i]);
+            player.AssignRole(i < mafiaCount ? Role.Mafia : Role.Citizen);
+            _activePlayers.Add(player.Id, player);
         }
 
-        _status = GameStatus.Voting;
+        _status = GameStatus.Running;
+        Phase = GamePhase.Day;
+        _voting = new Voting();
         StartedAt = DateTime.UtcNow;
-        
-        var @event = new RolesAssignedEvent(
-            _activePlayers.Select(pair => new AssignedData(pair.Key, pair.Value.GetRole())
-            ).ToList()
-        );
-        AddNotification(@event);
     }
 
-    public void Vote(Guid voterId, Guid targetId) {
-        if (_status != GameStatus.Voting) throw new DomainException("Game already vote");
-        if (!IsAlive(voterId)) throw new DomainException("Voter doesn't exist");
-        if (!IsAlive(targetId)) throw new DomainException("Target doesn't exist");
-        
-        _activePlayers[voterId].Vote(targetId);
-        AddNotification(new PlayerVotedEvent(voterId, targetId));
+    public void MakeVote(Guid playerId, Guid targetId) {
+        EnsureRunning();
+        if (Phase != GamePhase.Day) {
+            throw new DomainException("Voting is not the current phase");
+        }
+        if (!IsAlive(playerId)) throw new DomainException("Voter is not an active player");
+        if (!IsAlive(targetId)) throw new DomainException("Target is not an active player");
+
+        _voting!.AddVote(playerId, targetId);
     }
 
-    public HashSet<Guid> GetAllPlayers() => _playerIds;
+    public void NextPhase() {
+        EnsureRunning();
+
+        if (Phase == GamePhase.Day) {
+            ResolveVoting();
+            if (TryFinish()) return;
+            Phase = GamePhase.Night;
+        }
+        else {
+            Phase = GamePhase.Day;
+            _voting = new Voting();
+        }
+    }
 
     public Role CheckRole(Guid playerId) {
-        var player = _activePlayers[playerId] ?? _deathPlayers[playerId];
-        if (player == null) {
-            throw new DomainException("Player doesn't exist");
+        if (_activePlayers.TryGetValue(playerId, out var player) ||
+            _deadPlayers.TryGetValue(playerId, out player)) {
+            return player.Role ?? throw new DomainException("Player role is not assigned");
         }
 
-        return player.GetRole();
+        throw new DomainException("Player doesn't exist");
     }
 
-    public void Finish() {
-        if (_status == GameStatus.Finished) throw new DomainException("Game already finished");
-        if (_activePlayers.Any(pair => pair.Value is Mafia)) {
-            throw new DomainException("The game have one or more mafia players");
+    public IReadOnlyCollection<Guid> GetAllPlayers() => _playerIds;
+
+    private void ResolveVoting() {
+        var targetId = _voting!.FinishAndGetResult();
+        if (targetId is null) return;
+
+        var victim = _activePlayers[targetId.Value];
+        _activePlayers.Remove(victim.Id);
+        _deadPlayers.Add(victim.Id, victim);
+
+        AddNotification(new PlayerKilledDomainEvent(victim.Id, victim.Role!.Value));
+    }
+
+    private bool TryFinish() {
+        var mafiaAlive = _activePlayers.Values.Count(player => player.Role == Role.Mafia);
+        var citizensAlive = _activePlayers.Count - mafiaAlive;
+
+        if (mafiaAlive != 0 && mafiaAlive < citizensAlive) {
+            return false;
         }
-        
-        var winners = _activePlayers.Values
-            .Select(player => new PlayerInfo(player.Id, player.GetRole()))
-            .ToList();
-        var losers = _deathPlayers.Values
-            .Select(player => new PlayerInfo(player.Id, player.GetRole()))
-            .ToList();
+
+        Finish(mafiaAlive == 0 ? Role.Citizen : Role.Mafia);
+        return true;
+    }
+
+    private void Finish(Role winningSide) {
+        var winners = new List<PlayerInfo>();
+        var losers = new List<PlayerInfo>();
+
+        foreach (var player in _activePlayers.Values.Concat(_deadPlayers.Values)) {
+            var info = new PlayerInfo(player.Id, player.Role!.Value);
+            if (player.Role == winningSide) {
+                winners.Add(info);
+            }
+            else {
+                losers.Add(info);
+            }
+        }
 
         AddNotification(new GameFinishedEvent(winners, losers));
 
         _activePlayers.Clear();
-        _deathPlayers.Clear();
+        _deadPlayers.Clear();
+        _voting = null;
         _status = GameStatus.Finished;
+        FinishedAt = DateTime.UtcNow;
     }
 
-    private bool IsAlive(Guid id) {
-        if (_activePlayers.ContainsKey(id)) return true;
-        if (_deathPlayers.ContainsKey(id)) return false;
-        throw new DomainException("Player doesn't exists");
+    private void EnsureRunning() {
+        if (_status != GameStatus.Running) {
+            throw new DomainException("Game is not running");
+        }
     }
+
+    private bool IsAlive(Guid id) => _activePlayers.ContainsKey(id);
 }

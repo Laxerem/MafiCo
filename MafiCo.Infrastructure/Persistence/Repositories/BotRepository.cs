@@ -1,5 +1,4 @@
-using MafiCo.Infrastructure.Interfaces;
-using MafiCo.Infrastructure.Persistence.Entities;
+using MafiCo.Domain.AggregatesModel.BotAggregate;
 using Microsoft.EntityFrameworkCore;
 
 namespace MafiCo.Infrastructure.Persistence.Repositories;
@@ -11,30 +10,30 @@ public class BotRepository : IBotRepository {
         _context = context;
     }
 
-    public Task AddAsync(BotEntity botEntity) {
+    public Task AddAsync(Bot botEntity) {
         _context.Bots.Add(botEntity);
         return Task.CompletedTask;
     }
 
-    public async Task<BotEntity?> GetAsync(Guid id) {
+    public async Task<Bot?> GetAsync(Guid id) {
         return await _context.Bots.FindAsync(id);
     }
 
-    public async Task<List<BotEntity>> GetAllAsync() {
+    public async Task<List<Bot>> GetAllAsync() {
         return await _context.Bots
             .AsNoTracking()
-            .Include(x => x.Profile)
-            .Include(x => x.LlmEntity)
             .ToListAsync();
     }
 
-    public async Task<List<BotEntity>> GetAllAvailableAsync() {
+    public async Task<List<Bot>> GetAllAvailableAsync() {
         return await _context.Bots
             .AsNoTracking()
             .Where(x => x.LlmId != null)
-            .Include(x => x.Profile)
-            .Include(x => x.LlmEntity)
             .ToListAsync();
+    }
+
+    public async Task<bool> ExistsByProfileIdAsync(Guid profileId) {
+        return await _context.Bots.AnyAsync(x => x.ProfileId == profileId);
     }
 
     public async Task<bool> ExistsAsync(Guid id) {

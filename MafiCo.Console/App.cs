@@ -1,10 +1,10 @@
+using MafiCo.Application.Interfaces.Stores;
 using MafiCo.Console.Presentation;
 using MafiCo.Console.Presentation.Base;
 using MafiCo.Console.Presentation.Features.Menu;
 using MafiCo.Console.Presentation.Features.Profile;
 using MafiCo.Domain.AggregatesModel.ProfileAggregate;
 using MafiCo.Infrastructure.Interfaces;
-using MafiCo.Infrastructure.Interfaces.Store;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace MafiCo.Console;

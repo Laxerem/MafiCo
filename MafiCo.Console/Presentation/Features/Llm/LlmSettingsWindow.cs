@@ -1,21 +1,18 @@
 using MafiCo.Console.Presentation.Base;
 using MafiCo.Console.Presentation.Extensions;
-using MafiCo.Console.Presentation.Features.Llm.UseCases;
 using MafiCo.Console.Presentation.Features.Menu;
-using MafiCo.Infrastructure.DTOs;
+using MafiCo.Infrastructure.MediatR.Llm;
+using MafiCo.Infrastructure.MediatR.Llm.Commands;
+using MediatR;
 using Spectre.Console;
 
 namespace MafiCo.Console.Presentation.Features.Llm;
 
 public class LlmSettingsWindow : Window {
-    private readonly GetLlmModels _getLlmModels;
-    private readonly CreateLlm _createLlm;
-    private readonly DeleteLlmModel _deleteLlmModel;
+    private readonly IMediator _mediator;
 
-    public LlmSettingsWindow(GetLlmModels getLlmModels, CreateLlm createLlm, DeleteLlmModel deleteLlmModel) {
-        _getLlmModels = getLlmModels;
-        _createLlm = createLlm;
-        _deleteLlmModel = deleteLlmModel;
+    public LlmSettingsWindow(IMediator mediator) {
+        _mediator = mediator;
     }
 
     public override async Task Show() {
@@ -35,7 +32,7 @@ public class LlmSettingsWindow : Window {
     }
 
     private async Task<List<LlmDto>> RenderModelsAsync() {
-        var models = await _getLlmModels.ExecuteAsync();
+        var models = await _mediator.Send(new GetLlmsCommand());
         if (models.Count == 0) {
             AppComponents.WriteInfo("Моделей пока нет\n");
             return models;
@@ -59,7 +56,7 @@ public class LlmSettingsWindow : Window {
         var apiKey = await AppComponents.GetUserInput("Api key:");
 
         await RunAndReturnAsync<LlmSettingsWindow>(
-            () => _createLlm.ExecuteAsync(modelName, providerUrl, apiKey),
+            () => _mediator.Send(new CreateLlmCommand(modelName, providerUrl, apiKey)),
             "Модель добавлена!",
             "Не удалось добавить модель");
     }
@@ -71,7 +68,7 @@ public class LlmSettingsWindow : Window {
             model => $"{model.ModelName} | {model.Url}");
 
         await RunAndReturnAsync<LlmSettingsWindow>(
-            () => _deleteLlmModel.ExecuteAsync(selectedModel.Id),
+            () => _mediator.Send(new DeleteLlmCommand(selectedModel.Id)),
             "Модель удалена! Боты, которые её использовали, останутся без модели.",
             "Не удалось удалить модель");
     }

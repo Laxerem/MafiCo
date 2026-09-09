@@ -1,31 +1,20 @@
 using MafiCo.Console.Presentation.Base;
 using MafiCo.Console.Presentation.Extensions;
-using MafiCo.Console.Presentation.Features.Bots.UseCases;
-using MafiCo.Console.Presentation.Features.Llm.UseCases;
 using MafiCo.Console.Presentation.Features.Menu;
-using MafiCo.Infrastructure.DTOs;
+using MafiCo.Infrastructure.MediatR.Bot;
+using MafiCo.Infrastructure.MediatR.Bot.Commands;
+using MafiCo.Infrastructure.MediatR.Llm;
+using MafiCo.Infrastructure.MediatR.Llm.Commands;
+using MediatR;
 using Spectre.Console;
 
 namespace MafiCo.Console.Presentation.Features.Bots;
 
 public class BotSettingsWindow : Window {
-    private readonly GetBots _getBots;
-    private readonly GetLlmModels _getLlmModels;
-    private readonly CreateBot _createBot;
-    private readonly DeleteBot _deleteBot;
-    private readonly ChangeBotModel _changeBotModel;
+    private readonly IMediator _mediator;
 
-    public BotSettingsWindow(
-        GetBots getBots,
-        GetLlmModels getLlmModels,
-        CreateBot createBot,
-        DeleteBot deleteBot,
-        ChangeBotModel changeBotModel) {
-        _getBots = getBots;
-        _getLlmModels = getLlmModels;
-        _createBot = createBot;
-        _deleteBot = deleteBot;
-        _changeBotModel = changeBotModel;
+    public BotSettingsWindow(IMediator mediator) {
+        _mediator = mediator;
     }
 
     public override async Task Show() {
@@ -45,7 +34,7 @@ public class BotSettingsWindow : Window {
     }
 
     private async Task<List<BotDto>> RenderBotsAsync() {
-        var bots = await _getBots.ExecuteAsync();
+        var bots = await _mediator.Send(new GetBotsCommand());
         if (bots.Count == 0) {
             AppComponents.WriteInfo("Ботов пока нет\n");
             return bots;
@@ -73,7 +62,7 @@ public class BotSettingsWindow : Window {
         var name = await AppComponents.GetUserInput("Имя бота");
 
         await RunAndReturnAsync<BotSettingsWindow>(
-            () => _createBot.ExecuteAsync(name, selectedLlm.Id),
+            () => _mediator.Send(new CreateBotCommand(name, selectedLlm.Id)),
             "Бот создан!",
             "Не удалось создать бота");
     }
@@ -93,7 +82,7 @@ public class BotSettingsWindow : Window {
 
     private async Task DeleteBotAsync(BotDto bot) {
         await RunAndReturnAsync<BotSettingsWindow>(
-            () => _deleteBot.ExecuteAsync(bot.Id),
+            () => _mediator.Send(new DeleteBotCommand(bot.Id)),
             "Бот удалён!",
             "Не удалось удалить бота");
     }
@@ -107,13 +96,13 @@ public class BotSettingsWindow : Window {
         var selectedLlm = await AppComponents.SelectFrom("Выберите модель", llmModels, llm => llm.ModelName);
 
         await RunAndReturnAsync<BotSettingsWindow>(
-            () => _changeBotModel.ExecuteAsync(bot.Id, selectedLlm.Id),
+            () => _mediator.Send(new ChangeBotModelCommand(bot.Id, selectedLlm.Id)),
             "Модель изменена!",
             "Не удалось изменить модель");
     }
 
     private async Task<List<LlmDto>?> GetAvailableModelsAsync() {
-        var llmModels = await _getLlmModels.ExecuteAsync();
+        var llmModels = await _mediator.Send(new GetLlmsCommand());
         if (llmModels.Count > 0) {
             return llmModels;
         }

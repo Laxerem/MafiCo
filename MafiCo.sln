@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MafiCo.Domain", "MafiCo.Dom
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MafiCo.Infrastructure", "MafiCo.Infrastructure\MafiCo.Infrastructure.csproj", "{FF77BAF4-54DD-4A84-A430-38135B772A26}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MafiCo.Application", "MafiCo.Application\MafiCo.Application.csproj", "{461E0050-3524-49BB-A7C4-EC5239D8532B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{FF77BAF4-54DD-4A84-A430-38135B772A26}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FF77BAF4-54DD-4A84-A430-38135B772A26}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FF77BAF4-54DD-4A84-A430-38135B772A26}.Release|Any CPU.Build.0 = Release|Any CPU
+		{461E0050-3524-49BB-A7C4-EC5239D8532B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{461E0050-3524-49BB-A7C4-EC5239D8532B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{461E0050-3524-49BB-A7C4-EC5239D8532B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{461E0050-3524-49BB-A7C4-EC5239D8532B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
