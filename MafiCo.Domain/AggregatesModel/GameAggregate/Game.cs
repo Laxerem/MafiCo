@@ -64,6 +64,9 @@ public class Game : Entity, IAggregateRoot {
     }
 
     public void NextPhase() {
+        if (_status == GameStatus.Finished) {
+            throw new DomainException("Game has ended");
+        }
         EnsureRunning();
 
         if (Phase == GamePhase.Day) {
@@ -140,5 +143,5 @@ public class Game : Entity, IAggregateRoot {
         }
     }
 
-    private bool IsAlive(Guid id) => _activePlayers.ContainsKey(id);
+    public bool IsAlive(Guid id) => _activePlayers.ContainsKey(id);
 }
