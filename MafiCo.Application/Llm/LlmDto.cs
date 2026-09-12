@@ -1,4 +1,4 @@
-namespace MafiCo.Infrastructure.MediatR.Llm;
+namespace MafiCo.Application.Llm;
 
 public record LlmDto(
     Guid Id,

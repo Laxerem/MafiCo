@@ -1,10 +1,10 @@
+using MafiCo.Application.Interfaces;
+using MafiCo.Application.Llm.Commands;
 using MafiCo.Domain.AggregatesModel.LlmAggregate;
 using MafiCo.Domain.Exceptions;
-using MafiCo.Infrastructure.Interfaces;
-using MafiCo.Infrastructure.MediatR.Llm.Commands;
 using MediatR;
 
-namespace MafiCo.Infrastructure.MediatR.Llm.Handlers;
+namespace MafiCo.Application.Llm.Handlers;
 
 public class DeleteLlmHandler : IRequestHandler<DeleteLlmCommand> {
     private readonly ILlmRepository _repository;

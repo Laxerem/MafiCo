@@ -1,10 +1,10 @@
+using MafiCo.Application.Interfaces;
+using MafiCo.Application.Llm.Commands;
 using MafiCo.Domain.AggregatesModel.LlmAggregate;
-using MafiCo.Infrastructure.Interfaces;
-using MafiCo.Infrastructure.MediatR.Llm.Commands;
 using MediatR;
 using DomainLlm = MafiCo.Domain.AggregatesModel.LlmAggregate.Llm;
 
-namespace MafiCo.Infrastructure.MediatR.Llm.Handlers;
+namespace MafiCo.Application.Llm.Handlers;
 
 public class CreateLlmHandler : IRequestHandler<CreateLlmCommand> {
     private readonly ILlmRepository _repository;
