@@ -2,7 +2,7 @@ using MafiCo.Application.Interfaces.Mediator;
 using MafiCo.Application.Interfaces.Mediator.Access;
 using MediatR;
 
-namespace MafiCo.Infrastructure.Mediator;
+namespace MafiCo.Application.Game.Mediator.Access;
 
 public class GamePublisher : IGamePublisher {
     private readonly IMediator _mediator;

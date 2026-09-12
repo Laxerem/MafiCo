@@ -1,5 +1,6 @@
 using MafiCo.Application.Game.Commands;
 using MafiCo.Application.Game.DTOs;
+using MafiCo.Application.Game.Mediator.Commands;
 using MafiCo.Domain.AggregatesModel.ProfileAggregate;
 using MediatR;
 

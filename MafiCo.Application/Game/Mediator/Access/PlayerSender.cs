@@ -2,7 +2,7 @@ using MafiCo.Application.Interfaces.Commands;
 using MafiCo.Application.Interfaces.Mediator.Access;
 using MediatR;
 
-namespace MafiCo.Application.Game.Mediator;
+namespace MafiCo.Application.Game.Mediator.Access;
 
 public class PlayerSender : IPlayerSender {
     private readonly ISender _mediator;

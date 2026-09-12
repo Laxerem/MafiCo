@@ -1,6 +1,7 @@
 using MafiCo.Application.Game;
 using MafiCo.Application.Game.Commands;
 using MafiCo.Application.Game.DTOs;
+using MafiCo.Application.Game.Mediator.Commands;
 using MafiCo.Application.Game.Notifications;
 using MafiCo.Domain.DTOs;
 using MediatR;
