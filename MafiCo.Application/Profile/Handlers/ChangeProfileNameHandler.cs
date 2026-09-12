@@ -1,11 +1,11 @@
+using MafiCo.Application.Interfaces;
 using MafiCo.Application.Interfaces.Stores;
+using MafiCo.Application.Profile.Commands;
 using MafiCo.Domain.AggregatesModel.ProfileAggregate;
 using MafiCo.Domain.Exceptions;
-using MafiCo.Infrastructure.Interfaces;
-using MafiCo.Infrastructure.MediatR.Profile.Commands;
 using MediatR;
 
-namespace MafiCo.Infrastructure.MediatR.Profile.Handlers;
+namespace MafiCo.Application.Profile.Handlers;
 
 public class ChangeProfileNameHandler : IRequestHandler<ChangeProfileNameCommand> {
     private readonly IProfileRepository _repository;

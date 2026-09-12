@@ -2,7 +2,7 @@ using MafiCo.Console.Presentation.Base;
 using MafiCo.Console.Presentation.Extensions;
 using MafiCo.Console.Presentation.Features.Menu;
 using MafiCo.Domain.SeedWork;
-using MafiCo.Infrastructure.MediatR.Profile.Commands;
+using MafiCo.Application.Profile.Commands;
 using MediatR;
 using Spectre.Console;
 
