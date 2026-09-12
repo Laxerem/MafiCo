@@ -1,4 +1,4 @@
-using MafiCo.Application.Notifications.GameNotifications;
+using MafiCo.Application.Game.Notifications;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 

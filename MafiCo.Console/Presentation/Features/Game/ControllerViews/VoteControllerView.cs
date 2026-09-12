@@ -1,5 +1,5 @@
-using MafiCo.Infrastructure.Controllers;
-using MafiCo.Infrastructure.DTOs;
+using MafiCo.Application.Game.Controllers;
+using MafiCo.Application.Game.DTOs;
 using Spectre.Console;
 
 namespace MafiCo.Console.Presentation.Features.Game.ControllerViews;

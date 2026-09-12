@@ -1,5 +1,4 @@
-using MafiCo.Application.Notifications;
-using MafiCo.Application.Notifications.GameNotifications;
+using MafiCo.Application.Game.Notifications;
 using MediatR;
 
 namespace MafiCo.Console.Presentation.Features.Game;

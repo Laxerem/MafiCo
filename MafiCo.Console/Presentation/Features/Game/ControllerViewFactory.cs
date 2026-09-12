@@ -1,7 +1,8 @@
-using MafiCo.Application.Interfaces.Controllers;
+using MafiCo.Application.Game;
+using MafiCo.Application.Game.Controllers;
+using MafiCo.Application.Game.DTOs;
+using MafiCo.Application.Interfaces;
 using MafiCo.Console.Presentation.Features.Game.ControllerViews;
-using MafiCo.Infrastructure.Controllers;
-using MafiCo.Infrastructure.DTOs;
 
 namespace MafiCo.Console.Presentation.Features.Game;
 

@@ -1,12 +1,10 @@
 using System.Threading.Channels;
 using MafiCo.Application.Interfaces;
-using MafiCo.Application.Interfaces.Controllers;
 using MafiCo.Application.Interfaces.Notifications;
-using MafiCo.Application.Notifications;
-using MediatR;
-namespace MafiCo.Application.Game.Contexts;
 
-public class PlayerContext {
+namespace MafiCo.Application.Game;
+
+public class PlayerView {
     public List<IGameNotification> Events { get; private set; }
     public IPlayerController? Controller { get; private set; }
     public readonly ChannelReader<IGameNotification> EventsReader;
@@ -14,7 +12,7 @@ public class PlayerContext {
     private Channel<IGameNotification> _channel;
     
 
-    public PlayerContext() {
+    public PlayerView() {
         Events = new List<IGameNotification>();
         _channel = Channel.CreateUnbounded<IGameNotification>();
         EventsReader = _channel.Reader;

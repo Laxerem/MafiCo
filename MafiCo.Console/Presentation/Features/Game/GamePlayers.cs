@@ -1,4 +1,4 @@
-using MafiCo.Infrastructure.DTOs;
+using MafiCo.Application.Game.DTOs;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 

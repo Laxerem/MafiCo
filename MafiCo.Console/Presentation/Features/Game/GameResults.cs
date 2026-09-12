@@ -1,6 +1,6 @@
-using MafiCo.Application.Notifications.GameNotifications;
+using MafiCo.Application.Game.DTOs;
+using MafiCo.Application.Game.Notifications;
 using MafiCo.Domain.DTOs;
-using MafiCo.Infrastructure.DTOs;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 
