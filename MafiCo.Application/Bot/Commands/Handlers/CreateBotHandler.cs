@@ -1,14 +1,14 @@
+using MafiCo.Application.Bot.Commands;
+using MafiCo.Application.Interfaces;
 using MafiCo.Domain.AggregatesModel.BotAggregate;
 using MafiCo.Domain.AggregatesModel.LlmAggregate;
 using MafiCo.Domain.AggregatesModel.ProfileAggregate;
 using MafiCo.Domain.Exceptions;
-using MafiCo.Infrastructure.Interfaces;
-using MafiCo.Infrastructure.MediatR.Bot.Commands;
 using MediatR;
 using DomainBot = MafiCo.Domain.AggregatesModel.BotAggregate.Bot;
 using DomainProfile = MafiCo.Domain.AggregatesModel.ProfileAggregate.Profile;
 
-namespace MafiCo.Infrastructure.MediatR.Bot.Handlers;
+namespace MafiCo.Application.Bot.Commands.Handlers;
 
 public class CreateBotHandler : IRequestHandler<CreateBotCommand> {
     private readonly IBotRepository _botRepository;

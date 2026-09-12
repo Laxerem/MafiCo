@@ -1,12 +1,13 @@
+using MafiCo.Application.Bot;
+using MafiCo.Application.Bot.Commands;
+using MafiCo.Application.Llm;
 using MafiCo.Domain.AggregatesModel.BotAggregate;
 using MafiCo.Domain.AggregatesModel.LlmAggregate;
 using MafiCo.Domain.AggregatesModel.ProfileAggregate;
 using MafiCo.Domain.DTOs;
-using MafiCo.Infrastructure.MediatR.Bot.Commands;
-using MafiCo.Infrastructure.MediatR.Llm;
 using MediatR;
 
-namespace MafiCo.Infrastructure.MediatR.Bot.Handlers;
+namespace MafiCo.Application.Bot.Commands.Handlers;
 
 public class GetBotsHandler : IRequestHandler<GetBotsCommand, List<BotDto>> {
     private readonly IBotRepository _botRepository;

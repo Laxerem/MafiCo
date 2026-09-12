@@ -1,7 +1,7 @@
+using MafiCo.Application.Llm;
 using MafiCo.Domain.DTOs;
-using MafiCo.Infrastructure.MediatR.Llm;
 
-namespace MafiCo.Infrastructure.MediatR.Bot;
+namespace MafiCo.Application.Bot;
 
 public record BotDto(
     Guid Id,
