@@ -12,6 +12,8 @@ public static class NotificationBuilder {
                 return $"Фаза: {notify.Phase}";
             case PlayerVotedNotification notify:
                 return $"{notify.PlayerName} голосует против {notify.TargetName}";
+            case PlayerKilledNotification notify:
+                return $"{notify.PlayerName} был убит";
         }
         throw new NotImplementedException($"Builder for notification {notification.GetType()} doesn't exists");
     }
