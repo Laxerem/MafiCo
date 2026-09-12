@@ -13,15 +13,18 @@ public class GameWorker {
         _game = game;
     }
 
-    public async Task StartAsync(int mafiaCount) {
+    public async Task RunAsync(int mafiaCount) {
         await Task.Run(async () => Work(mafiaCount));
     }
 
     private async Task Work(int mafiaCount) {
         _game.AssignRoles(mafiaCount);
         await _publisher.Publish(new RoleAssignedEvent());
+        await _publisher.Publish(new PhaseChangedEvent(_game.Phase));
+        await Task.Delay(TimeSpan.FromSeconds(10));
 
         while (true) {
+            _game.NextPhase();
             await _publisher.Publish(new PhaseChangedEvent(_game.Phase));
             await Task.Delay(TimeSpan.FromSeconds(10));
         }
