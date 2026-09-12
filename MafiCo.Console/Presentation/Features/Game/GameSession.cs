@@ -1,8 +1,8 @@
-using MafiCo.Application.Game.Contexts;
-using MafiCo.Application.Notifications.GameNotifications;
+using MafiCo.Application.Game;
+using MafiCo.Application.Game.Commands;
+using MafiCo.Application.Game.DTOs;
+using MafiCo.Application.Game.Notifications;
 using MafiCo.Domain.DTOs;
-using MafiCo.Infrastructure.DTOs;
-using MafiCo.Infrastructure.MediatR.Game.Commands;
 using MediatR;
 using Spectre.Console;
 
@@ -14,8 +14,8 @@ namespace MafiCo.Console.Presentation.Features.Game;
 /// и показываются после нажатия Enter. Завершается по <see cref="GameFinishedNotification"/>.
 /// </summary>
 public sealed class GameSession {
-    private readonly PlayerContext _context;
-    private readonly IMediator _mediator;
+    private readonly PlayerView _view;
+    private readonly ISender _mediator;
     private readonly Guid _selfId;
     private readonly GameChat _chat;
     private readonly GamePlayers _players;
@@ -24,8 +24,8 @@ public sealed class GameSession {
     private IReadOnlyList<PublicPlayerInfo> _playerList = [];
     private GameFinishedNotification? _finished;
 
-    public GameSession(PlayerContext context, ProfileInfo me, IMediator mediator) {
-        _context = context;
+    public GameSession(PlayerView view, ProfileInfo me, IMediator mediator) {
+        _view = view;
         _mediator = mediator;
         _selfId = me.Id;
         _chat = new GameChat(me.Name);
@@ -51,7 +51,7 @@ public sealed class GameSession {
                 dirty = false;
             }
 
-            var view = ControllerViewFactory.Create(_context.Controller, _playerList, _selfId);
+            var view = ControllerViewFactory.Create(_view.Controller, _playerList, _selfId);
             if (view is null) {
                 await Task.Delay(500);
                 continue;
@@ -78,7 +78,7 @@ public sealed class GameSession {
 
     private bool DrainNotifications() {
         var changed = false;
-        while (_context.EventsReader.TryRead(out var notification)) {
+        while (_view.EventsReader.TryRead(out var notification)) {
             changed = true;
 
             switch (notification) {

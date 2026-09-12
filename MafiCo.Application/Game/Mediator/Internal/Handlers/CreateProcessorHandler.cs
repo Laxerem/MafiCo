@@ -1,12 +1,11 @@
-using MafiCo.Application.Game;
-using MafiCo.Application.Game.Contexts;
+using MafiCo.Application.Game.Mediator.Internal.Commands;
 using MafiCo.Domain.AggregatesModel.BotAggregate;
 using MafiCo.Domain.AggregatesModel.ProfileAggregate;
 using MediatR;
 
-namespace MafiCo.Infrastructure.MediatR.System;
+namespace MafiCo.Application.Game.Mediator.Internal.Handlers;
 
-public class CreateProcessorHandler : IRequestHandler<CreateProcessorCommand, PlayerProcessor> {
+internal class CreateProcessorHandler : IRequestHandler<CreateProcessorCommand, PlayerProcessor> {
     private readonly GameContext _context;
     private readonly IBotRepository _botRepository;
     private readonly IProfileRepository _profileRepository;
