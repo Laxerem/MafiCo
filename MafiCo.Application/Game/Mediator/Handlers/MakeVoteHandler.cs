@@ -16,7 +16,7 @@ public class MakeVoteHandler : IRequestHandler<MakeVoteCommand> {
     }
     
     public async Task Handle(MakeVoteCommand request, CancellationToken cancellationToken) {
-        var game = _context.GetGame();
+        var game = await _context.GetGameAsync();
         game.MakeVote(request.PlayerId, request.TargetId);
 
         var voterProfile = await _profileRepository.GetAsync(request.PlayerId)!;
