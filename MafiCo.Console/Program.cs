@@ -36,6 +36,8 @@ var app = Host.CreateDefaultBuilder(args)
     })
     .Build();
 
+await app.Services.ApplyMigrationsAsync();
+
 using var scope = app.Services.CreateScope();
 var application = scope.ServiceProvider.GetRequiredService<App>();
 await application.RunAsync();

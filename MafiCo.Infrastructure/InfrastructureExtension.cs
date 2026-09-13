@@ -5,6 +5,7 @@ using MafiCo.Domain.AggregatesModel.LlmAggregate;
 using MafiCo.Domain.AggregatesModel.ProfileAggregate;
 using MafiCo.Infrastructure.Persistence;
 using MafiCo.Infrastructure.Persistence.Repositories;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -18,5 +19,11 @@ public static class InfrastructureExtension {
         services.AddScoped<ILlmRepository, LlmRepository>();
         services.AddScoped<IBotRepository, BotRepository>();
         services.AddScoped<IGameRepository, GameRepository>();
+    }
+
+    public static async Task ApplyMigrationsAsync(this IServiceProvider services) {
+        using var scope = services.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
+        await context.Database.MigrateAsync();
     }
 }
