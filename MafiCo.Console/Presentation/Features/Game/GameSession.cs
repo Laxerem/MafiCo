@@ -3,6 +3,7 @@ using MafiCo.Application.Game.Commands;
 using MafiCo.Application.Game.DTOs;
 using MafiCo.Application.Game.Mediator.Commands;
 using MafiCo.Application.Game.Notifications;
+using MafiCo.Console.Presentation.Features.Game.ControllerViews;
 using MafiCo.Domain.DTOs;
 using MediatR;
 using Spectre.Console;
@@ -11,8 +12,9 @@ namespace MafiCo.Console.Presentation.Features.Game;
 
 /// <summary>
 /// Игровой экран: крутит цикл "вычитать события -> перерисовать -> дать игроку сходить".
-/// Полудуплекс: пока игрок вводит сообщение, входящие события копятся в канале
-/// и показываются после нажатия Enter. Завершается по <see cref="GameFinishedNotification"/>.
+/// Ход игрока прерывается сам, как только в канале появляется новое событие, — экран
+/// перерисовывается и ход запрашивается заново, без ручного действия игрока.
+/// Завершается по <see cref="GameFinishedNotification"/>.
 /// </summary>
 public sealed class GameSession {
     private readonly PlayerView _view;
@@ -58,8 +60,37 @@ public sealed class GameSession {
                 continue;
             }
 
-            await view.RunTurnAsync();
+            await RunInterruptibleTurnAsync(view);
             dirty = true;
+        }
+    }
+
+    /// <summary>
+    /// Проводит ход контроллера, прерывая его, как только в канал приходит новое событие:
+    /// без этого пока игрок выбирает вариант или печатает сообщение, входящие события
+    /// копились бы в канале и оставались невидимыми до завершения хода.
+    /// </summary>
+    private async Task RunInterruptibleTurnAsync(IControllerView view) {
+        using var interrupt = new CancellationTokenSource();
+        var watcher = WatchForNotificationsAsync(interrupt);
+
+        try {
+            await view.RunTurnAsync(interrupt.Token);
+        } catch (OperationCanceledException) when (interrupt.IsCancellationRequested) {
+            // Пришло новое событие — ход прервался сам, экран перерисуется и запросит ход заново.
+        } finally {
+            interrupt.Cancel();
+            await watcher;
+        }
+    }
+
+    private async Task WatchForNotificationsAsync(CancellationTokenSource interrupt) {
+        try {
+            if (await _view.EventsReader.WaitToReadAsync(interrupt.Token)) {
+                interrupt.Cancel();
+            }
+        } catch (OperationCanceledException) {
+            // Ход завершился сам — дальше ждать не нужно.
         }
     }
 
@@ -88,6 +119,10 @@ public sealed class GameSession {
                     break;
                 case GameFinishedNotification finished:
                     _finished ??= finished;
+                    break;
+                case ControllerChangedNotification:
+                    // Технический сигнал: PlayerView.Controller уже обновлён, тут только
+                    // будим цикл — он прервёт текущий ход и перечитает новый контроллер.
                     break;
                 default:
                     _chat.AppendGameEvent(NotificationBuilder.Build(notification));

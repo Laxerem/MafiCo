@@ -1,4 +1,5 @@
 using System.Threading.Channels;
+using MafiCo.Application.Game.Notifications;
 using MafiCo.Application.Interfaces;
 using MafiCo.Application.Interfaces.Notifications;
 
@@ -8,7 +9,6 @@ public class PlayerView {
     public List<IGameNotification> Events { get; private set; }
     public IPlayerController? Controller { get; private set; }
     public readonly ChannelReader<IGameNotification> EventsReader;
-    public event Action OnControllerChanged; 
     private Channel<IGameNotification> _channel;
     
 
@@ -25,6 +25,6 @@ public class PlayerView {
     
     public void ChangeController(IPlayerController? controller) {
         Controller = controller;
-        OnControllerChanged?.Invoke();
+        _channel.Writer.TryWrite(new ControllerChangedNotification(controller));
     }
 }

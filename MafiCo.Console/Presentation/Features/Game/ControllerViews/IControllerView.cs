@@ -8,6 +8,8 @@ namespace MafiCo.Console.Presentation.Features.Game.ControllerViews;
 internal interface IControllerView {
     /// <summary>
     /// Проводит один шаг взаимодействия с игроком (запрос ввода и отправка действия).
+    /// Прерывается через <paramref name="cancellationToken"/>, если во время ввода
+    /// пришло новое игровое событие, — экран должен обновиться сам, без ручного действия игрока.
     /// </summary>
-    Task RunTurnAsync();
+    Task RunTurnAsync(CancellationToken cancellationToken);
 }

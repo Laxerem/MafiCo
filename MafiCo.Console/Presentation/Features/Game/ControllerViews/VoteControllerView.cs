@@ -19,23 +19,25 @@ internal sealed class VoteControllerView : IControllerView {
         _selfId = selfId;
     }
 
-    public async Task RunTurnAsync() {
+    public async Task RunTurnAsync(CancellationToken cancellationToken) {
         var options = _players
             .Where(player => player.IsAlive && player.Id != _selfId)
             .Select(player => new VoteOption(Markup.Escape(player.Name), player.Id))
-            .Prepend(new VoteOption("[grey]— обновить экран —[/]", null))
             .ToList();
+
+        if (options.Count == 0) {
+            return;
+        }
 
         var choice = await AnsiConsole.PromptAsync(
             new SelectionPrompt<VoteOption>()
                 .Title("[red]Кого казнить?[/]")
                 .UseConverter(option => option.Label)
-                .AddChoices(options));
+                .AddChoices(options),
+            cancellationToken);
 
-        if (choice.TargetId is { } targetId) {
-            await _controller.MakeVote(targetId);
-        }
+        await _controller.MakeVote(choice.TargetId);
     }
 
-    private sealed record VoteOption(string Label, Guid? TargetId);
+    private sealed record VoteOption(string Label, Guid TargetId);
 }
