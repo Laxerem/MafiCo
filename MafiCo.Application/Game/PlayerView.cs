@@ -18,12 +18,12 @@ public class PlayerView {
         EventsReader = _channel.Reader;
     }
 
-    public async Task AddNotificationAsync(IGameNotification notification) {
+    internal async Task AddNotificationAsync(IGameNotification notification) {
         Events.Add(notification);
         await _channel.Writer.WriteAsync(notification);
     }
     
-    public void ChangeController(IPlayerController? controller) {
+    internal void ChangeController(IPlayerController? controller) {
         Controller = controller;
         _channel.Writer.TryWrite(new ControllerChangedNotification(controller));
     }

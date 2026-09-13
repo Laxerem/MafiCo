@@ -22,7 +22,7 @@ public class GameContext : INotifySource, INotifyConsumer {
         _processors = new Dictionary<Guid, PlayerProcessor>();
     }
 
-    public async Task InitializeAsync(GameEntity game, ISender mediator) {
+    internal async Task InitializeAsync(GameEntity game, ISender mediator) {
         if (_isInitialized) throw new InvalidOperationException("Game has already been initialized.");
         _game = game;
         _isInitialized = true;
@@ -39,14 +39,14 @@ public class GameContext : INotifySource, INotifyConsumer {
         return _processors[playerId].View;
     }
 
-    public GameEntity GetGame() {
+    internal GameEntity GetGame() {
         if (_game is null) {
             throw new NullReferenceException("Game context is null");
         }
         return _game;
     }
 
-    public void Reset() {
+    internal void Reset() {
         _game = null;
         _isInitialized = false;
         _processors.Clear();
