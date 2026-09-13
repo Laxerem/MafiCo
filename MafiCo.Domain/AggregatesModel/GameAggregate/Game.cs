@@ -1,3 +1,4 @@
+using MafiCo.Domain.AggregatesModel.GameAggregate.Entities;
 using MafiCo.Domain.AggregatesModel.GameAggregate.Events;
 using MafiCo.Domain.AggregatesModel.GameAggregate.Items;
 using MafiCo.Domain.DTOs;
@@ -54,9 +55,9 @@ public class Game : Entity, IAggregateRoot {
 
     public void MakeVote(Guid playerId, Guid targetId) {
         EnsureRunning();
-        if (Phase != GamePhase.Day) {
-            throw new DomainException("Voting is not the current phase");
-        }
+        // if (Phase != GamePhase.Day) {
+        //     throw new DomainException("Voting is not the current phase");
+        // }
         if (!IsAlive(playerId)) throw new DomainException("Voter is not an active player");
         if (!IsAlive(targetId)) throw new DomainException("Target is not an active player");
 
@@ -64,17 +65,20 @@ public class Game : Entity, IAggregateRoot {
     }
 
     public void NextPhase() {
+        if (_status == GameStatus.Finished) {
+            throw new DomainException("Game has ended");
+        }
         EnsureRunning();
-
+        ResolveVoting();
+        if (TryFinish()) return;
+        
         if (Phase == GamePhase.Day) {
-            ResolveVoting();
-            if (TryFinish()) return;
             Phase = GamePhase.Night;
         }
         else {
             Phase = GamePhase.Day;
-            _voting = new Voting();
         }
+        _voting = new Voting();
     }
 
     public Role CheckRole(Guid playerId) {
@@ -140,5 +144,5 @@ public class Game : Entity, IAggregateRoot {
         }
     }
 
-    private bool IsAlive(Guid id) => _activePlayers.ContainsKey(id);
+    public bool IsAlive(Guid id) => _activePlayers.ContainsKey(id);
 }

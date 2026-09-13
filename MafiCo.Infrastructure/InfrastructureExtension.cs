@@ -1,8 +1,8 @@
+using MafiCo.Application.Interfaces;
 using MafiCo.Domain.AggregatesModel.BotAggregate;
 using MafiCo.Domain.AggregatesModel.GameAggregate;
 using MafiCo.Domain.AggregatesModel.LlmAggregate;
 using MafiCo.Domain.AggregatesModel.ProfileAggregate;
-using MafiCo.Infrastructure.Interfaces;
 using MafiCo.Infrastructure.Persistence;
 using MafiCo.Infrastructure.Persistence.Repositories;
 using Microsoft.Extensions.Configuration;
@@ -18,9 +18,5 @@ public static class InfrastructureExtension {
         services.AddScoped<ILlmRepository, LlmRepository>();
         services.AddScoped<IBotRepository, BotRepository>();
         services.AddScoped<IGameRepository, GameRepository>();
-
-        services.AddMediatR(conf =>
-            conf.RegisterServicesFromAssembly(typeof(InfrastructureExtension).Assembly)
-        );
     }
 }

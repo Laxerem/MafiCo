@@ -12,4 +12,8 @@ public class GameRepository : IGameRepository {
     public Game Add(Game game) {
         return _context.Games.Add(game).Entity!;
     }
+
+    public async Task<Game?> GetAsync(Guid id) {
+        return await _context.Games.FindAsync(id);
+    }
 }

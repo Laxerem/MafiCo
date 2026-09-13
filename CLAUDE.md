@@ -13,7 +13,7 @@ There is no architecture doc or spec yet. `README.md` contains only a logo image
 ## Tech stack
 
 - **.NET 9** (`net9.0`), SDK pinned by `global.json` to `9.0.100` (rollForward `latestMinor`)
-- **MediatR 14.2.0** — CQRS commands + notification dispatch. Referenced by Domain, Infrastructure and Console
+- **MediatR 14.2.0** — CQRS commands + notification dispatch. Referenced directly by Domain, Application and Console; Infrastructure only consumes it transitively (no handlers live there)
 - **EF Core 9.0.0 + SQLite** — persistence; schema `mafico`
 - **Spectre.Console 0.57.2** — the entire UI (`AnsiConsole` prompts/panels)
 - **Microsoft.Extensions.Hosting 10.0.10** — generic host / DI. Note the deliberate 10.x-vs-9.x version split with EF Core
@@ -32,16 +32,21 @@ MafiCo.Domain/           # Pure domain model. No project refs (but does referenc
 ├── DTOs/                # Cross-aggregate read records (PlayerInfo, ProfileInfo)
 └── Exceptions/          # One DomainException subclass per aggregate
 
-MafiCo.Application/      # → Domain. Use-case contracts + in-memory game runtime
-├── Interfaces/          # Commands/, Controllers/, Notifications/, Stores/ + IGameOrchestrator, IEventSource, IEventConsumer
-├── Game/                # GameContext, PlayerContext, PlayerProcessor — the live per-match objects
-└── Notifications/       # Concrete notification records sent to players
+MafiCo.Application/      # → Domain. All use cases (CQRS via MediatR) + the in-memory live game runtime
+├── <Feature>/           # Bot, Llm, Profile — flat Commands/ + Handlers/ per feature
+├── Game/                # Bigger feature, own breakdown:
+│   ├── Controllers/     #   IPlayerController implementations (DefaultController, VoterController)
+│   ├── DTOs/, Notifications/  #   PublicPlayerInfo; concrete IGameNotification/IPlayerNotification/ISystemNotification records
+│   ├── Mediator/        #   Commands/ + Handlers/ for player-facing commands (StartGame, SendMessage, MakeVote, GetPlayers)
+│   │   └── Internal/    #     Commands/Events/Handlers not reachable from the UI (CreateProcessor, PhaseChanged, GameFinished)
+│   └── GameContext.cs, GameWorker.cs, PlayerProcessor.cs, PlayerView.cs  # live per-match objects, see Key patterns
+├── Interfaces/          # Commands/, Stores/, Mediator/{Access,Notifications} + IUnitOfWork, IPlayerController
+└── ApplicationExtension.cs   # DI + AddMediatR() — MediatR is rooted here now, not in Infrastructure
 
-MafiCo.Infrastructure/   # → Application, Domain. Everything impure
-├── MediatR/<Feature>/   # Commands/ + Handlers/ per feature (Bot, Game, Llm, Profile, System)
-│   └── Game/GameOrchestrator.cs   # the game loop — lives HERE, not in Application
+MafiCo.Infrastructure/   # → Application, Domain. Persistence only — no use-case/CQRS code lives here anymore
 ├── Persistence/         # ApplicationContext, Configurations/, Repositories/, UnitOfWork
-├── Controllers/         # IPlayerController implementations
+├── Mediator/            # GamePublisher — the only IGamePublisher implementation (wraps IMediator.Publish)
+├── MediatorExtension.cs # DispatchDomainEventsAsync — drains Entity.Notifications into mediator.Publish
 └── Migrations/
 
 MafiCo.Console/          # → Domain, Infrastructure. Composition root + TUI (OutputType Exe)
@@ -62,16 +67,16 @@ MafiCo.Console/          # → Domain, Infrastructure. Composition root + TUI (O
 Strictly inward: `Console → Infrastructure → Application → Domain`. Interfaces live in the inner layer, implementations in the outer one — repository interfaces sit next to their aggregate in Domain, implementations in `Infrastructure/Persistence/Repositories`. `MafiCo.Console.csproj` does **not** reference Application directly; Application types are visible only transitively.
 
 ### Two event pipelines — pick the right one
-`IGameNotification` (Application) is the **live** pipeline: raised by `GameOrchestrator`, pushed through the singleton `GameContext` (`IEventConsumer`/`IEventSource`), fanned out by `PlayerProcessor` into a per-player unbounded `Channel<IGameNotification>` on `PlayerContext`, drained by `GameSession` in the UI. `IDomainEvent` (Domain, raised via `Entity.AddNotification`, dispatched by `UnitOfWork.SaveEntitiesAsync` → `DispatchDomainEventsAsync`) is currently **inert** — its only handler throws `NotImplementedException` and live games are never saved. Anything a player must see goes through notifications.
+`IGameNotification` (Application) is the **live** pipeline: internal game moments are published as `IGameEvent`s (`PhaseChangedEvent`, `RoleAssignedEvent`) through `IGamePublisher`, picked up by MediatR notification handlers under `Game/Mediator/Internal/Handlers/` (e.g. `PhaseChangedHandler`), and turned into `IGameNotification`s sent via the singleton `GameContext` (`INotifySource`/`INotifyConsumer`). `PlayerProcessor` fans those out into a per-player unbounded `Channel<IGameNotification>` on `PlayerView`, drained by `GameSession` in the UI. `IDomainEvent` (Domain, raised via `Entity.AddNotification`, dispatched by `UnitOfWork.SaveEntitiesAsync` → `MediatorExtension.DispatchDomainEventsAsync` → `mediator.Publish`) now has real consumers too — e.g. `GameFinishedHandler` turns `GameFinishedEvent` into a `GameFinishedNotification`. Anything a player must see goes through `IGameNotification`; a bare `IDomainEvent` handler must translate it, not leak the domain type into the UI.
 
 ### CQRS via MediatR
-Every use case is a command `record` + a handler class under `Infrastructure/MediatR/<Feature>/`. The UI never touches aggregates or the orchestrator directly — it sends commands via `IMediator` and reads notifications from the channel.
+Every use case is a command `record` + a handler class, both living in `MafiCo.Application` — flat under `<Feature>/{Commands,Handlers}` for Bot/Llm/Profile, under `Game/Mediator/{Commands,Handlers}` for player-facing Game commands. Commands not reachable from the UI (bootstrapping a `PlayerProcessor`, internal game events) live under `Game/Mediator/Internal/`. MediatR is registered once, from `ApplicationExtension.AddMediatR`, scanning the Application assembly — Infrastructure has no handlers and no `AddMediatR` call. The UI never touches aggregates directly — it sends commands via `IMediator`/`IPlayerSender` and reads notifications from the channel.
 
 ### Screen routing
 `Window` subclasses raise `OnSwitchWindow`; `UserInterface` resolves the target type from DI and swaps screens. `AddUi()` reflection-scans the assembly for non-abstract `Window` types and registers them transient — **a new screen needs no DI registration**. `GameSession` is intentionally outside this router and owns its own render loop.
 
 ### DI composition
-Each project exposes one `Add<Layer>()` extension, all called from `Program.cs`. `GameContext` is singleton; DbContext, repositories, `IUnitOfWork`, stores and `App` are scoped; MediatR handlers are assembly-scanned. `GameOrchestrator` is **not** in DI — it is `new`-ed per match inside `StartGameHandler`.
+Each project exposes one `Add<Layer>()` extension, all called from `Program.cs`. `GameContext` is singleton; DbContext, repositories, `IUnitOfWork`, stores and `App` are scoped; MediatR handlers are assembly-scanned. `GameWorker` (the successor to the old `GameOrchestrator`) is deliberately **not** in DI — it takes the `Game` aggregate as a constructor argument, so it is meant to be `new`-ed per match — but nothing currently does that; see Known incomplete areas.
 
 ---
 
@@ -91,13 +96,13 @@ Each project exposes one `Add<Layer>()` extension, all called from `Program.cs`.
 
 - Don't add a player-visible event as an `IDomainEvent` — use an `IGameNotification`.
 - Don't extend `Domain/ValueObjects/Phase.cs` or `PhaseType.cs`; the live phase model is the `GamePhase` enum in `GameAggregate/Items/`.
-- Don't register `IGameOrchestrator` in DI; it is constructed per match by design.
+- Don't add MediatR commands/handlers under `MafiCo.Infrastructure` — that project has none left; all CQRS code lives in `MafiCo.Application`.
 - Don't add a connection string to config expecting it to be used — `ApplicationContext.OnConfiguring` hardcodes `Data Source=../../../mafico.db`. Changing that is a deliberate refactor, not a drive-by fix.
 - Don't uncomment `IGameStore`/`GameStore` or the bot branch in `CreateProcessorHandler` as a side effect of unrelated work.
 
 ### Known incomplete areas
 
-Night phase is a no-op in `GameOrchestrator.ProcessPhase`; the loop advances on a hardcoded 10 s delay and never calls `Game.NextPhase()`. Bot/LLM play is stubbed. `NotificationBuilder.Build` throws on unhandled notification types — extend its switch whenever you add a notification. Persisting an in-progress game is unimplemented.
+`GameWorker` (day/night loop + role assignment + phase publishing) is never constructed or started by `StartGameHandler`, and its `IGamePublisher` dependency isn't registered in DI either — starting a game currently does not advance phases or send `RoleAssignedNotification`/`PhaseChangedNotification` at all. `RoleAssignedEvent` has no handler yet, so even once `GameWorker` runs, role assignment won't reach players until one is added (mirror `PhaseChangedHandler`). Day/night no longer changes a player's controller — `DefaultController` is assigned once at game start and never swapped. Bot/LLM play is stubbed (`CreateProcessorHandler`'s bot branch is commented out). `NotificationBuilder.Build` throws on unhandled notification types — extend its switch whenever you add a notification. Persisting an in-progress game is unimplemented (the `Game` aggregate is never added to `IGameRepository`, so `SaveEntitiesAsync` has nothing to persist).
 
 ---
 

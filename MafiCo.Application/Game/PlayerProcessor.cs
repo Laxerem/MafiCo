@@ -1,42 +1,39 @@
-using MafiCo.Application.Game.Contexts;
+using MafiCo.Application.Game.Notifications;
 using MafiCo.Application.Interfaces;
 using MafiCo.Application.Interfaces.Notifications;
-using MafiCo.Application.Notifications;
 using MediatR;
 
 namespace MafiCo.Application.Game;
 
 public class PlayerProcessor {
-    public readonly PlayerContext Context;
-    protected readonly IEventSource _eventSource;
+    public readonly PlayerView View;
+    protected readonly INotifySource NotifySource;
     private bool _isRunning;
 
-    public PlayerProcessor(IEventSource eventEventSource) {
-        Context = new PlayerContext();
-        _eventSource = eventEventSource;
+    public PlayerProcessor(INotifySource notifyNotifySource) {
+        View = new PlayerView();
+        NotifySource = notifyNotifySource;
     }
 
-    public async Task RunAsync() {
+    public void Run() {
+        if (_isRunning) return;
         _isRunning = true;
-        _eventSource.OnNotification += SendNotify;
+        NotifySource.OnNotification += SendNotify;
     }
 
-    public async Task SendNotify(INotification notification) {
-        if (_isRunning) {
-            switch (notification) {
-                case IGameNotification playerNotification:
-                    await Context.AddNotificationAsync(playerNotification);
-                    break;
-                case ControllerChangedNotification controllerNotification:
-                    Context.ChangeController(controllerNotification.Controller);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(notification), notification, null);
-            }
-        }
+    public async Task SendNotify(IGameNotification notification) {
+        if (!_isRunning) return;
+        await View.AddNotificationAsync(notification);
+    }
+
+    public void SetController(IPlayerController? playerController) {
+        if (!_isRunning) return;
+        View.ChangeController(playerController);
     }
 
     public void Stop() {
-        
+        if (!_isRunning) return;
+        _isRunning = false;
+        NotifySource.OnNotification -= SendNotify;
     }
 }

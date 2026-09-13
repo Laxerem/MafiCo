@@ -1,4 +1,4 @@
-using MafiCo.Infrastructure.Controllers;
+using MafiCo.Application.Game.Controllers;
 using Spectre.Console;
 
 namespace MafiCo.Console.Presentation.Features.Game.ControllerViews;
@@ -14,9 +14,10 @@ internal sealed class ChatControllerView : IControllerView {
         _controller = controller;
     }
 
-    public async Task RunTurnAsync() {
+    public async Task RunTurnAsync(CancellationToken cancellationToken) {
         var message = await AnsiConsole.PromptAsync(
-            new TextPrompt<string>("[green]Вы[/]:").AllowEmpty());
+            new TextPrompt<string>("[green]Вы[/]:").AllowEmpty(),
+            cancellationToken);
 
         if (!string.IsNullOrWhiteSpace(message)) {
             await _controller.SendMessage(message);

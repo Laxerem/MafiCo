@@ -10,5 +10,6 @@ public class GameConfiguration : EntityConfiguration<Game> {
         builder.ToTable("Games");
         builder.Property(x => x.StartedAt).IsRequired();
         builder.Property(x => x.FinishedAt).HasDefaultValue(null);
+        builder.Ignore(x => x.Phase);
     }
 }

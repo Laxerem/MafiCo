@@ -1,8 +1,8 @@
 using MafiCo.Console.Presentation.Base;
 using MafiCo.Console.Presentation.Extensions;
 using MafiCo.Console.Presentation.Features.Menu;
-using MafiCo.Infrastructure.MediatR.Llm;
-using MafiCo.Infrastructure.MediatR.Llm.Commands;
+using MafiCo.Application.Llm;
+using MafiCo.Application.Llm.Commands;
 using MediatR;
 using Spectre.Console;
 
