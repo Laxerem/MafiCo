@@ -1,4 +1,3 @@
-using MafiCo.Application.Game.Commands;
 using MafiCo.Application.Game.DTOs;
 using MafiCo.Application.Game.Mediator.Commands;
 using MafiCo.Domain.AggregatesModel.ProfileAggregate;
@@ -16,7 +15,7 @@ public class GetPlayersHandler : IRequestHandler<GetPlayersCommand, List<PublicP
     }
     
     public async Task<List<PublicPlayerInfo>> Handle(GetPlayersCommand request, CancellationToken cancellationToken) {
-        var game = await _context.GetGameAsync();
+        var game = _context.GetGame();
         var playerIds = game.GetAllPlayers();
         
         var playerProfiles = new List<PublicPlayerInfo>();

@@ -12,7 +12,7 @@ public class RoleAssignedHandler : INotificationHandler<RoleAssignedEvent> {
     }
     
     public async Task Handle(RoleAssignedEvent notification, CancellationToken cancellationToken) {
-        var game = await _gameContext.GetGameAsync();
+        var game = _gameContext.GetGame();
         
         foreach (var pair in _gameContext.Processors) {
             var processorId = pair.Key;
