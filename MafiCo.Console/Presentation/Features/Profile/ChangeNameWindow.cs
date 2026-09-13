@@ -1,6 +1,5 @@
 using MafiCo.Console.Presentation.Base;
 using MafiCo.Console.Presentation.Extensions;
-using MafiCo.Console.Presentation.Features.Menu;
 using MafiCo.Application.Profile.Commands;
 using MediatR;
 
@@ -16,7 +15,7 @@ public class ChangeNameWindow : Window {
     public async override Task Show() {
         var newName = await AppComponents.GetUserInput("Новое имя");
 
-        await RunAndReturnAsync<SettingsWindow>(
+        await RunAndReturnAsync<ProfileWindow>(
             () => _mediator.Send(new ChangeProfileNameCommand(newName)),
             "Имя изменено!",
             "Не удалось изменить имя");
