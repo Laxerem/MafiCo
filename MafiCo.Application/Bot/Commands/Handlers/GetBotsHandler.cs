@@ -1,6 +1,7 @@
 using MafiCo.Application.Bot;
 using MafiCo.Application.Bot.Commands;
 using MafiCo.Application.Llm;
+using MafiCo.Domain;
 using MafiCo.Domain.AggregatesModel.BotAggregate;
 using MafiCo.Domain.AggregatesModel.LlmAggregate;
 using MafiCo.Domain.AggregatesModel.ProfileAggregate;
@@ -39,7 +40,7 @@ public class GetBotsHandler : IRequestHandler<GetBotsCommand, List<BotDto>> {
                     ? LlmDto.FromEntity(found)
                     : null;
 
-                return new BotDto(bot.Id, new ProfileInfo(profile.Id, profile.Name), model);
+                return new BotDto(bot.Id, profile.ToProfileInfo(), model);
             })
             .ToList();
     }

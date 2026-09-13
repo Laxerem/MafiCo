@@ -1,5 +1,6 @@
 using MafiCo.Application.Interfaces.Stores;
 using MafiCo.Application.Profile.Commands;
+using MafiCo.Domain;
 using MafiCo.Domain.AggregatesModel.ProfileAggregate;
 using MafiCo.Domain.DTOs;
 using MafiCo.Domain.Exceptions;
@@ -22,6 +23,6 @@ public class GetMeHandler : IRequestHandler<GetMeCommand, ProfileInfo> {
         var profile = await _repository.GetAsync(userId)
             ?? throw new ProfileException("Profile not found");
 
-        return new ProfileInfo(profile.Id, profile.Name);
+        return profile.ToProfileInfo();
     }
 }

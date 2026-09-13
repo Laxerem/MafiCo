@@ -7,5 +7,6 @@ public interface IProfileRepository {
     void Update(Profile profile);
     bool Exists(Guid id);
     Task<Profile?> GetAsync(Guid id);
+    Task<List<Profile>> GetRangeAsync(IEnumerable<Guid> playerIds);
     Task<List<Profile>> GetAllAsync();
 }

@@ -26,6 +26,10 @@ public class ProfileRepository : IProfileRepository {
         return await _context.Profiles.FindAsync(id);
     }
 
+    public async Task<List<Profile>> GetRangeAsync(IEnumerable<Guid> playerIds) {
+        return await _context.Profiles.Where(p => playerIds.Contains(p.Id)).ToListAsync();
+    }
+
     public async Task<List<Profile>> GetAllAsync() {
         return await _context.Profiles.ToListAsync();
     }

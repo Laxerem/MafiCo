@@ -9,8 +9,7 @@ public class Profile : Entity, IAggregateRoot {
     public int VictoriesCount { get; private set; }
     public int DefeatsCount { get; private set; }
 
-    private Profile() : base(Guid.Empty) {
-    }
+    private Profile() : base(Guid.Empty) {}
 
     private Profile(string name) : base(Guid.NewGuid()) {
         Name = name;
@@ -30,5 +29,8 @@ public class Profile : Entity, IAggregateRoot {
         if (name.Length is < 3 or > 15) {
             throw new ProfileException("The name must be between 3 and 15 characters.");
         }
+    }
+    public void RegisterWin() {
+        VictoriesCount++;
     }
 }
