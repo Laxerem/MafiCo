@@ -17,7 +17,7 @@ internal class CreateProcessorHandler : IRequestHandler<CreateProcessorCommand, 
     }
     
     public Task<PlayerProcessor> Handle(CreateProcessorCommand request, CancellationToken cancellationToken) {
-        var profileId = request.profileId;
+        var profileId = request.ProfileId;
         if (!_profileRepository.Exists(profileId)) {
             throw new ApplicationException($"Profile with id {profileId} does not exist");
         }

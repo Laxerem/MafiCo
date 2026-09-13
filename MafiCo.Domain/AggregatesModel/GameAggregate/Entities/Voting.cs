@@ -1,6 +1,6 @@
 using MafiCo.Domain.SeedWork;
 
-namespace MafiCo.Domain.AggregatesModel.GameAggregate;
+namespace MafiCo.Domain.AggregatesModel.GameAggregate.Entities;
 
 public class Voting : Entity {
     private bool _isActive;
