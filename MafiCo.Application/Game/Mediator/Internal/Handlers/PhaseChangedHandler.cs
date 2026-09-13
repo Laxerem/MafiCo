@@ -23,18 +23,26 @@ internal class PhaseChangedHandler : INotificationHandler<PhaseChangedEvent> {
     
     public async Task Handle(PhaseChangedEvent evt, CancellationToken cancellationToken) {
         await _unitOfWork.SaveEntitiesAsync(cancellationToken);
+        await _mediator.DispatchGameEvents(_context.GetGame());
         switch (evt.Phase) {
             case GamePhase.Day:
                 foreach (var processor in _context.Processors.Values) {
                     processor.Run();
                 }
+                GiveControllerToAll(id => new DefaultController(id, new PlayerSender(_mediator)));
                 await _context.SendNotify(new PhaseChangedNotification(evt.Phase));
+                await Task.Delay(5000, cancellationToken);
+                
+                GiveControllerToAll(id => new VoterController(id, new PlayerSender(_mediator)));
+                await Task.Delay(5000, cancellationToken);
                 break;
             case GamePhase.Night:
+                GiveControllerToAll(id => null!);
                 await _context.SendNotify(new PhaseChangedNotification(evt.Phase));
-                var game = await _context.GetGameAsync();
+                var game = _context.GetGame();
                 StunRole(game, Role.Citizen);
-                GiveControllerToRole(game, Role.Mafia, id => new VoterController(id, new PlayerSender(_mediator)));
+                GiveControllerToRole(Role.Mafia, id => new VoterController(id, new PlayerSender(_mediator)));
+                await Task.Delay(10000, cancellationToken);
                 break;
         }
     }
@@ -49,13 +57,21 @@ internal class PhaseChangedHandler : INotificationHandler<PhaseChangedEvent> {
         }
     }
 
-    private void GiveControllerToRole(GameEntity game, Role role, Func<Guid, IPlayerController> factory) {
+    private void GiveControllerToRole(Role role, Func<Guid, IPlayerController> factory) {
+        var game = _context.GetGame();
         foreach (var pair in _context.Processors) {
             var processor = pair.Value;
             var playerRole = game.CheckRole(pair.Key);
             if (playerRole == role) {
                 processor.SetController(factory(pair.Key));
             }
+        }
+    }
+
+    private void GiveControllerToAll(Func<Guid, IPlayerController?> factory) {
+        foreach (var pair in _context.Processors) {
+            var processor = pair.Value;
+            processor.SetController(factory(pair.Key));
         }
     }
 }

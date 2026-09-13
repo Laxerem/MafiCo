@@ -26,7 +26,6 @@ public class GameWorker {
         while (true) {
             _game.NextPhase();
             await _publisher.Publish(new PhaseChangedEvent(_game.Phase));
-            await Task.Delay(TimeSpan.FromSeconds(10));
         }
     }
 }

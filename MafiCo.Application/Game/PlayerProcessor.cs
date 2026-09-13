@@ -26,7 +26,7 @@ public class PlayerProcessor {
         await View.AddNotificationAsync(notification);
     }
 
-    public void SetController(IPlayerController playerController) {
+    public void SetController(IPlayerController? playerController) {
         if (!_isRunning) return;
         View.ChangeController(playerController);
     }

@@ -42,10 +42,8 @@ public class StartGameHandler : IRequestHandler<StartGameCommand, PlayerView> {
         await _gameContext.InitializeAsync(game, _mediator);
 
         foreach (var pair in _gameContext.Processors) {
-            var processorId = pair.Key;
             var processor = pair.Value;
             processor.Run();
-            processor.SetController(new VoterController(processorId, new PlayerSender(_mediator)));
         }
 
         var gameWorker = new GameWorker(game, new GamePublisher(_mediator));
