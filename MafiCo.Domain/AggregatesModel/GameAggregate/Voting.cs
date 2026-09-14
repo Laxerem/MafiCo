@@ -1,12 +1,12 @@
 using MafiCo.Domain.SeedWork;
 
-namespace MafiCo.Domain.AggregatesModel.GameAggregate.Entities;
+namespace MafiCo.Domain.AggregatesModel.GameAggregate;
 
-public class Voting : Entity {
+public class Voting : IValueObject {
     private bool _isActive;
     private readonly Dictionary<Guid, Guid> _votes;
 
-    public Voting() : base(Guid.NewGuid()) {
+    public Voting() {
         _votes = new Dictionary<Guid, Guid>();
         _isActive = true;
     }
