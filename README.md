@@ -35,7 +35,7 @@ MafiCo.Application/
 │   ├── Controllers/        #   Что игрок может делать сейчас: чат или голосование
 │   ├── Mediator/           #   Команды игрока и внутренние события/обработчики игры
 │   ├── Notifications/      #   Уведомления, которые видит игрок
-│   └── GameContext, GameWorker, PlayerProcessor, PlayerView
+│   └── GameContext, GameWorker, PlayerProcessor, PlayerSession
 └── Interfaces/             # Контракты, реализуемые во внешних слоях
 
 MafiCo.Infrastructure/
@@ -73,7 +73,7 @@ MafiCo.Console/
 #### Ход матча 
 `StartGameHandler` создаёт `Game`, для каждого игрока поднимает `PlayerProcessor` и запускает `GameWorker`. `GameWorker` раздаёт роли и переключает фазы. Всё, что должен увидеть игрок, превращается в уведомление `IGameNotification`. 
 
-Уведомления рассылаются через синглтон `GameContext`, попадают в персональный канал игрока (`PlayerView`) и отрисовываются экраном `GameSession`.
+Уведомления рассылаются через синглтон `GameContext`, попадают в персональный канал игрока (`PlayerSession`) и отрисовываются экраном `GameSession` (в проекте `MafiCo.Console`).
 
 ## Сборка и запуск
 
