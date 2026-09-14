@@ -15,7 +15,7 @@ public class GetPlayersHandler : IRequestHandler<GetPlayersCommand, List<PublicP
     }
     
     public async Task<List<PublicPlayerInfo>> Handle(GetPlayersCommand request, CancellationToken cancellationToken) {
-        var game = _context.GetGame();
+        var game = _context.Session!.Game;
         var playerIds = game.GetAllPlayers();
         
         var playerProfiles = new List<PublicPlayerInfo>();

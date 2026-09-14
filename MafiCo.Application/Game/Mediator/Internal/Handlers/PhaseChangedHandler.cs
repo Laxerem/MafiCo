@@ -22,56 +22,52 @@ internal class PhaseChangedHandler : INotificationHandler<PhaseChangedEvent> {
     }
     
     public async Task Handle(PhaseChangedEvent evt, CancellationToken cancellationToken) {
-        await _unitOfWork.SaveEntitiesAsync(cancellationToken);
-        await _mediator.DispatchGameEvents(_context.GetGame());
+        var gameSession = _context.Session!;
+        
+        await _mediator.DispatchGameEvents(gameSession.Game);
         switch (evt.Phase) {
             case GamePhase.Day:
-                foreach (var processor in _context.Processors.Values) {
+                foreach (var processor in gameSession.GetProcessors()) {
                     processor.Run();
                 }
-                GiveControllerToAll(id => new DefaultController(id, new PlayerSender(_mediator)));
-                await _context.SendNotify(new PhaseChangedNotification(evt.Phase));
+                await GiveControllerToAll(gameSession, id => new DefaultController(id, new PlayerSender(_mediator)));
+                await gameSession.HandleAsync(new PhaseChangedNotification(evt.Phase));
                 await Task.Delay(5000, cancellationToken);
                 
-                GiveControllerToAll(id => new VoterController(id, new PlayerSender(_mediator)));
+                await GiveControllerToAll(gameSession, id => new VoterController(id, new PlayerSender(_mediator)));
                 await Task.Delay(5000, cancellationToken);
                 break;
             case GamePhase.Night:
-                GiveControllerToAll(id => null!);
-                await _context.SendNotify(new PhaseChangedNotification(evt.Phase));
-                var game = _context.GetGame();
-                StunRole(game, Role.Citizen);
-                GiveControllerToRole(Role.Mafia, id => new VoterController(id, new PlayerSender(_mediator)));
-                await Task.Delay(10000, cancellationToken);
+                await GiveControllerToAll(gameSession, id => null!);
+                await gameSession.HandleAsync(new PhaseChangedNotification(evt.Phase));
+                StunRole(gameSession, Role.Citizen);
+                await GiveControllerToRole(gameSession, Role.Mafia, id => new VoterController(id, new PlayerSender(_mediator)));
+                await Task.Delay(2000, cancellationToken);
                 break;
         }
     }
 
-    private void StunRole(GameEntity game, Role role) {
-        foreach (var pair in _context.Processors) {
-            var processor = pair.Value;
-            var playerRole = game.CheckRole(pair.Key);
+    private void StunRole(GameSession session, Role role) {
+        foreach (var processor in session.GetProcessors()) {
+            var playerRole = session.Game.CheckRole(processor.Id);
             if (playerRole == role) {
                 processor.Stop();
             }
         }
     }
 
-    private void GiveControllerToRole(Role role, Func<Guid, IPlayerController> factory) {
-        var game = _context.GetGame();
-        foreach (var pair in _context.Processors) {
-            var processor = pair.Value;
-            var playerRole = game.CheckRole(pair.Key);
+    private async Task GiveControllerToRole(GameSession session, Role role, Func<Guid, IPlayerController> factory) {
+        foreach (var processor in session.GetProcessors()) {
+            var playerRole = session.Game.CheckRole(processor.Id);
             if (playerRole == role) {
-                processor.SetController(factory(pair.Key));
+                await processor.SendNotify(new ControllerChangedNotification(factory(processor.Id)));
             }
         }
     }
 
-    private void GiveControllerToAll(Func<Guid, IPlayerController?> factory) {
-        foreach (var pair in _context.Processors) {
-            var processor = pair.Value;
-            processor.SetController(factory(pair.Key));
+    private async Task GiveControllerToAll(GameSession session, Func<Guid, IPlayerController?> factory) {
+        foreach (var processor in session.GetProcessors()) {
+            await processor.SendNotify(new  ControllerChangedNotification(factory(processor.Id)));
         }
     }
 }

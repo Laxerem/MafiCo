@@ -1,4 +1,5 @@
 using MafiCo.Application.Game.Commands;
+using MafiCo.Application.Game.Mediator.Commands;
 using MafiCo.Application.Game.Notifications;
 using MafiCo.Domain.AggregatesModel.ProfileAggregate;
 using MediatR;
@@ -15,12 +16,12 @@ public class MakeVoteHandler : IRequestHandler<MakeVoteCommand> {
     }
     
     public async Task Handle(MakeVoteCommand request, CancellationToken cancellationToken) {
-        var game = _context.GetGame();
-        game.MakeVote(request.PlayerId, request.TargetId);
+        var gameSession = _context.Session!;
+        gameSession.Game.MakeVote(request.PlayerId, request.TargetId);
 
         var voterProfile = await _profileRepository.GetAsync(request.PlayerId)!;
         var targetProfile = await _profileRepository.GetAsync(request.TargetId)!;
         
-        await _context.SendNotify(new PlayerVotedNotification(voterProfile!.Name, targetProfile!.Name));
+        await gameSession.HandleAsync(new PlayerVotedNotification(voterProfile!.Name, targetProfile!.Name));
     }
 }

@@ -2,6 +2,7 @@ using MafiCo.Console.Presentation.Base;
 using MafiCo.Console.Presentation.Extensions;
 using MafiCo.Console.Presentation.Features.Menu;
 using MafiCo.Application.Game.Commands;
+using MafiCo.Application.Game.Mediator.Commands;
 using MafiCo.Application.Profile.Commands;
 using MediatR;
 using Spectre.Console;
@@ -21,8 +22,8 @@ public class GameWindow : Window {
         var mafiaCount = int.Parse(userInput);
 
         var me = await _mediator.Send(new GetMeCommand());
-        var playerContext = await _mediator.Send(new StartGameCommand(mafiaCount));
-        await new GameSession(playerContext, me, _mediator).RunAsync();
+        var playerSession = await _mediator.Send(new StartGameCommand(mafiaCount));
+        await new GameSession(playerSession, me, _mediator).RunAsync();
 
         await SwitchTo<MenuWindow>();
     }

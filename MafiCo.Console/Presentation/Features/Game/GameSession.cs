@@ -1,8 +1,8 @@
-using MafiCo.Application.Game;
 using MafiCo.Application.Game.Commands;
 using MafiCo.Application.Game.DTOs;
 using MafiCo.Application.Game.Mediator.Commands;
 using MafiCo.Application.Game.Notifications;
+using MafiCo.Application.Interfaces.Game;
 using MafiCo.Console.Presentation.Features.Game.ControllerViews;
 using MafiCo.Domain.DTOs;
 using MediatR;
@@ -17,7 +17,7 @@ namespace MafiCo.Console.Presentation.Features.Game;
 /// Завершается по <see cref="GameFinishedNotification"/>.
 /// </summary>
 public sealed class GameSession {
-    private readonly PlayerView _view;
+    private readonly IPlayerSession _session;
     private readonly ISender _mediator;
     private readonly Guid _selfId;
     private readonly GameChat _chat;
@@ -27,8 +27,8 @@ public sealed class GameSession {
     private IReadOnlyList<PublicPlayerInfo> _playerList = [];
     private GameFinishedNotification? _finished;
 
-    public GameSession(PlayerView view, ProfileInfo me, IMediator mediator) {
-        _view = view;
+    public GameSession(IPlayerSession session, ProfileInfo me, IMediator mediator) {
+        _session = session;
         _mediator = mediator;
         _selfId = me.Id;
         _chat = new GameChat(me.Name);
@@ -54,7 +54,7 @@ public sealed class GameSession {
                 dirty = false;
             }
 
-            var view = ControllerViewFactory.Create(_view.Controller, _playerList, _selfId);
+            var view = ControllerViewFactory.Create(_session.Controller, _playerList, _selfId);
             if (view is null) {
                 await Task.Delay(500);
                 continue;
@@ -86,7 +86,7 @@ public sealed class GameSession {
 
     private async Task WatchForNotificationsAsync(CancellationTokenSource interrupt) {
         try {
-            if (await _view.EventsReader.WaitToReadAsync(interrupt.Token)) {
+            if (await _session.EventsReader.WaitToReadAsync(interrupt.Token)) {
                 interrupt.Cancel();
             }
         } catch (OperationCanceledException) {
@@ -110,7 +110,7 @@ public sealed class GameSession {
 
     private bool DrainNotifications() {
         var changed = false;
-        while (_view.EventsReader.TryRead(out var notification)) {
+        while (_session.EventsReader.TryRead(out var notification)) {
             changed = true;
 
             switch (notification) {

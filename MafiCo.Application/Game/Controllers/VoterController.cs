@@ -1,4 +1,5 @@
 using MafiCo.Application.Game.Commands;
+using MafiCo.Application.Game.Mediator.Commands;
 using MafiCo.Application.Interfaces;
 using MafiCo.Application.Interfaces.Mediator;
 using MafiCo.Application.Interfaces.Mediator.Access;

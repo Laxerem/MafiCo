@@ -1,7 +1,11 @@
+using System.Xml;
 using MafiCo.Application.Game.Commands;
 using MafiCo.Application.Game.Controllers;
 using MafiCo.Application.Game.Mediator.Access;
+using MafiCo.Application.Game.Mediator.Commands;
+using MafiCo.Application.Game.Mediator.Internal.Commands;
 using MafiCo.Application.Interfaces;
+using MafiCo.Application.Interfaces.Game;
 using MafiCo.Application.Interfaces.Stores;
 using MafiCo.Domain.AggregatesModel.GameAggregate;
 using MafiCo.Domain.AggregatesModel.ProfileAggregate;
@@ -10,7 +14,7 @@ using GameAggregate = MafiCo.Domain.AggregatesModel.GameAggregate.Game;
 
 namespace MafiCo.Application.Game.Mediator.Handlers;
 
-public class StartGameHandler : IRequestHandler<StartGameCommand, PlayerView> {
+public class StartGameHandler : IRequestHandler<StartGameCommand, IPlayerSession> {
     private readonly IMediator _mediator;
     private readonly IProfileRepository _profileRepository;
     private readonly IGameRepository _gameRepository;
@@ -28,7 +32,7 @@ public class StartGameHandler : IRequestHandler<StartGameCommand, PlayerView> {
         _unitOfWork = unitOfWork;
     }
     
-    public async Task<PlayerView> Handle(StartGameCommand request, CancellationToken cancellationToken) {
+    public async Task<IPlayerSession> Handle(StartGameCommand request, CancellationToken cancellationToken) {
         var userId = _store.GetUserId();
         if (!userId.HasValue) throw new ApplicationException("UserId does not exist");
         
@@ -39,16 +43,10 @@ public class StartGameHandler : IRequestHandler<StartGameCommand, PlayerView> {
         game = _gameRepository.Add(game);
         await _unitOfWork.SaveEntitiesAsync(cancellationToken);
         
-        await _gameContext.InitializeAsync(game, _mediator);
-
-        foreach (var pair in _gameContext.Processors) {
-            var processor = pair.Value;
-            processor.Run();
-        }
-
-        var gameWorker = new GameWorker(game, new GamePublisher(_mediator));
-        await gameWorker.RunAsync(request.MafiaCount);
+        var session = new GameSession(game);
+        _gameContext.SetSession(session);
         
-        return _gameContext.GetPlayerView(userId.Value);
+        await session.StartAsync(request.MafiaCount, _mediator);
+        return session.GetPlayerSession(userId.Value);
     }
 }

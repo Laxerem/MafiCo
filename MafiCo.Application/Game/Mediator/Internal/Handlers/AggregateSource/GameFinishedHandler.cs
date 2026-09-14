@@ -17,6 +17,8 @@ public class GameFinishedHandler : INotificationHandler<GameFinishedEvent> {
     }
     
     public async Task Handle(GameFinishedEvent notification, CancellationToken cancellationToken) {
+        var gameSession = _context.Session!;
+        
         var playerIds = notification.Losers
             .Concat(notification.Winners)
             .Select(x => x.Id)
@@ -28,7 +30,9 @@ public class GameFinishedHandler : INotificationHandler<GameFinishedEvent> {
             dictionary[winner.Id].RegisterWin();
         }
         
-        await _context.SendNotify(new GameFinishedNotification(notification.Winners, notification.Losers));
+        await gameSession.HandleAsync(new GameFinishedNotification(notification.Winners, notification.Losers));
+        
+        gameSession.Finish();
         _context.Reset();
     }
 }
