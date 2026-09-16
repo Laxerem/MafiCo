@@ -19,8 +19,12 @@ public static class ApplicationExtension {
 
     public static async ValueTask DispatchGameEvents(this IMediator mediator, GameEntity entity) {
         if (entity.Notifications.Count == 0) return;
-        foreach (var notification in entity.Notifications) {
-            await mediator.Publish(notification);
+        
+        var domainEvents = entity.Notifications.ToList();
+        entity.Notifications.Clear();
+
+        foreach (var domainEvent in domainEvents) {
+            await mediator.Publish(domainEvent);
         }
     }
 }

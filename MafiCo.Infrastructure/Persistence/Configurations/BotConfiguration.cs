@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace MafiCo.Infrastructure.Persistence.Configurations;
 
-public class BotConfiguration : EntityConfiguration<Bot> {
+public class BotConfiguration : AggregateConfiguration<Bot> {
     public override void Configure(EntityTypeBuilder<Bot> builder) {
         base.Configure(builder);
         builder.ToTable("Bots");

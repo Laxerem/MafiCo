@@ -2,7 +2,7 @@ using MafiCo.Domain.SeedWork;
 
 namespace MafiCo.Domain.AggregatesModel.GameAggregate;
 
-public class Voting : IValueObject {
+public class Voting {
     private bool _isActive;
     private readonly Dictionary<Guid, Guid> _votes;
 

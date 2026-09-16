@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace MafiCo.Infrastructure.Persistence.Configurations;
 
-public abstract class EntityConfiguration<T> : IEntityTypeConfiguration<T> where T : Entity {
+public abstract class AggregateConfiguration<T> : IEntityTypeConfiguration<T> where T : AggregateRoot {
     
     public virtual void Configure(EntityTypeBuilder<T> builder) {
         builder.HasKey(x => x.Id);

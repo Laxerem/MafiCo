@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace MafiCo.Infrastructure.Persistence.Configurations;
 
-public class LlmConfiguration : EntityConfiguration<Llm> {
+public class LlmConfiguration : AggregateConfiguration<Llm> {
     public override void Configure(EntityTypeBuilder<Llm> builder) {
         base.Configure(builder);
         builder.ToTable("LlmData");

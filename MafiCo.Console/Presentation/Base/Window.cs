@@ -1,6 +1,5 @@
 using System.Reflection;
 using MafiCo.Console.Presentation.Extensions;
-using MafiCo.Domain.Interfaces;
 using Spectre.Console;
 
 namespace MafiCo.Console.Presentation.Base;

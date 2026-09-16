@@ -6,6 +6,7 @@ public class Player : Entity {
     public Role? Role { get; private set; }
 
     public Player(Guid id) : base(id) {
+        
     }
 
     public void AssignRole(Role role) {

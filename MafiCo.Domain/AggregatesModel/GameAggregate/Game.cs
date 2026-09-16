@@ -2,12 +2,11 @@ using MafiCo.Domain.AggregatesModel.GameAggregate.Entities;
 using MafiCo.Domain.AggregatesModel.GameAggregate.Events;
 using MafiCo.Domain.AggregatesModel.GameAggregate.Items;
 using MafiCo.Domain.DTOs;
-using MafiCo.Domain.Interfaces;
 using MafiCo.Domain.SeedWork;
 
 namespace MafiCo.Domain.AggregatesModel.GameAggregate;
 
-public class Game : Entity, IAggregateRoot {
+public class Game : AggregateRoot {
     public DateTime StartedAt { get; private set; }
     public DateTime? FinishedAt { get; private set; }
 

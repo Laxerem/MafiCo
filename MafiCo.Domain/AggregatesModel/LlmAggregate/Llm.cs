@@ -1,9 +1,8 @@
-using MafiCo.Domain.Interfaces;
 using MafiCo.Domain.SeedWork;
 
 namespace MafiCo.Domain.AggregatesModel.LlmAggregate;
 
-public class Llm : Entity, IAggregateRoot {
+public class Llm : AggregateRoot {
     public string ModelName { get; private set; }
     public string Url { get; private set; }
     public string ApiKey { get; private set; }

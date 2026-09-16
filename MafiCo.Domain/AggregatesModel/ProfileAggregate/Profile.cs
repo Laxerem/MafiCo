@@ -1,10 +1,9 @@
 using MafiCo.Domain.Exceptions;
-using MafiCo.Domain.Interfaces;
 using MafiCo.Domain.SeedWork;
 
 namespace MafiCo.Domain.AggregatesModel.ProfileAggregate;
 
-public class Profile : Entity, IAggregateRoot {
+public class Profile : AggregateRoot {
     public string Name { get; private set; }
     public int VictoriesCount { get; private set; }
     public int DefeatsCount { get; private set; }

@@ -7,7 +7,7 @@ namespace MafiCo.Infrastructure;
 public static class MediatorExtension {
     public static async Task DispatchDomainEventsAsync(this IMediator mediator, ApplicationContext context) {
         var domainEntities = context.ChangeTracker
-            .Entries<Entity>()
+            .Entries<AggregateRoot>()
             .Where(x => x.Entity.Notifications.Any());
         
         var domainEvents = domainEntities

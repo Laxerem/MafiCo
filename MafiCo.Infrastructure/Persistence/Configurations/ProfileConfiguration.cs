@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace MafiCo.Infrastructure.Persistence.Configurations;
 
-public class ProfileConfiguration : EntityConfiguration<Profile> {
+public class ProfileConfiguration : AggregateConfiguration<Profile> {
     public override void Configure(EntityTypeBuilder<Profile> builder) {
         base.Configure(builder);
         

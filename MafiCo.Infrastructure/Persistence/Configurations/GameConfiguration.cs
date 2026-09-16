@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace MafiCo.Infrastructure.Persistence.Configurations;
 
-public class GameConfiguration : EntityConfiguration<Game> {
+public class GameConfiguration : AggregateConfiguration<Game> {
     public override void Configure(EntityTypeBuilder<Game> builder) {
         base.Configure(builder);
         builder.ToTable("Games");
