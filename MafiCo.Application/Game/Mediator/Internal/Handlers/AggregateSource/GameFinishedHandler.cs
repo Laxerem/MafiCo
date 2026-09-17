@@ -14,6 +14,7 @@ public class GameFinishedHandler : INotificationHandler<GameFinishedEvent> {
     public GameFinishedHandler(GameContext context, IProfileRepository repository, IUnitOfWork unitOfWork) {
         _context = context;
         _repository = repository;
+        _unitOfWork = unitOfWork;
     }
     
     public async Task Handle(GameFinishedEvent notification, CancellationToken cancellationToken) {
@@ -34,5 +35,6 @@ public class GameFinishedHandler : INotificationHandler<GameFinishedEvent> {
         
         gameSession.Finish();
         _context.Reset();
+        await _unitOfWork.SaveEntitiesAsync(cancellationToken);
     }
 }
