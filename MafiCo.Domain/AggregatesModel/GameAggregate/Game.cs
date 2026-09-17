@@ -10,19 +10,17 @@ public class Game : AggregateRoot {
     public DateTime StartedAt { get; private set; }
     public DateTime? FinishedAt { get; private set; }
 
-    private readonly HashSet<Guid> _playerIds;
-    private readonly Dictionary<Guid, Player> _activePlayers = new();
-    private readonly Dictionary<Guid, Player> _deadPlayers = new();
+    private readonly Dictionary<Guid, Player> _players;
     private Voting? _voting;
     private GameStatus _status;
     public GamePhase Phase { get; private set; }
 
     private Game() : base(Guid.NewGuid()) {
-        _playerIds = new HashSet<Guid>();
+        _players = new Dictionary<Guid, Player>();
     }
 
     public Game(HashSet<Guid> playerIds) : base(Guid.NewGuid()) {
-        _playerIds = playerIds;
+        _players = playerIds.ToDictionary(id => id, id => new Player(id));
         _status = GameStatus.Setting;
     }
 
@@ -30,20 +28,18 @@ public class Game : AggregateRoot {
         if (_status != GameStatus.Setting) {
             throw new DomainException("Roles are already assigned");
         }
-        if (_playerIds.Count <= 3) {
+        if (_players.Count <= 3) {
             throw new DomainException("Players count must be 4 or more players.");
         }
-        if (mafiaCount >= _playerIds.Count) {
+        if (mafiaCount >= _players.Count) {
             throw new DomainException("Mafia players count exceeds or equals player count");
         }
 
         var random = new Random();
-        var shuffled = _playerIds.OrderBy(_ => random.Next()).ToList();
+        var shuffled = _players.Keys.OrderBy(_ => random.Next()).ToList();
 
         for (var i = 0; i < shuffled.Count; i++) {
-            var player = new Player(shuffled[i]);
-            player.AssignRole(i < mafiaCount ? Role.Mafia : Role.Citizen);
-            _activePlayers.Add(player.Id, player);
+            _players[shuffled[i]].AssignRole(i < mafiaCount ? Role.Mafia : Role.Citizen);
         }
 
         _status = GameStatus.Running;
@@ -81,30 +77,29 @@ public class Game : AggregateRoot {
     }
 
     public Role CheckRole(Guid playerId) {
-        if (_activePlayers.TryGetValue(playerId, out var player) ||
-            _deadPlayers.TryGetValue(playerId, out player)) {
+        if (_players.TryGetValue(playerId, out var player)) {
             return player.Role ?? throw new DomainException("Player role is not assigned");
         }
 
         throw new DomainException("Player doesn't exist");
     }
 
-    public IReadOnlyCollection<Guid> GetAllPlayers() => _playerIds;
+    public IReadOnlyCollection<Guid> GetAllPlayers() => _players.Keys;
 
     private void ResolveVoting() {
         var targetId = _voting!.FinishAndGetResult();
         if (targetId is null) return;
 
-        var victim = _activePlayers[targetId.Value];
-        _activePlayers.Remove(victim.Id);
-        _deadPlayers.Add(victim.Id, victim);
+        var victim = _players[targetId.Value];
+        victim.Kill();
 
         AddNotification(new PlayerKilledDomainEvent(victim.Id, victim.Role!.Value));
     }
 
     private bool TryFinish() {
-        var mafiaAlive = _activePlayers.Values.Count(player => player.Role == Role.Mafia);
-        var citizensAlive = _activePlayers.Count - mafiaAlive;
+        var alivePlayers = _players.Values.Where(player => player.IsAlive).ToList();
+        var mafiaAlive = alivePlayers.Count(player => player.Role == Role.Mafia);
+        var citizensAlive = alivePlayers.Count - mafiaAlive;
 
         if (mafiaAlive != 0 && mafiaAlive < citizensAlive) {
             return false;
@@ -118,7 +113,7 @@ public class Game : AggregateRoot {
         var winners = new List<PlayerInfo>();
         var losers = new List<PlayerInfo>();
 
-        foreach (var player in _activePlayers.Values.Concat(_deadPlayers.Values)) {
+        foreach (var player in _players.Values) {
             var info = new PlayerInfo(player.Id, player.Role!.Value);
             if (player.Role == winningSide) {
                 winners.Add(info);
@@ -130,8 +125,7 @@ public class Game : AggregateRoot {
 
         AddNotification(new GameFinishedEvent(winners, losers));
 
-        _activePlayers.Clear();
-        _deadPlayers.Clear();
+        _players.Clear();
         _voting = null;
         _status = GameStatus.Finished;
         FinishedAt = DateTime.UtcNow;
@@ -143,5 +137,5 @@ public class Game : AggregateRoot {
         }
     }
 
-    public bool IsAlive(Guid id) => _activePlayers.ContainsKey(id);
+    public bool IsAlive(Guid id) => _players.TryGetValue(id, out var player) && player.IsAlive;
 }
