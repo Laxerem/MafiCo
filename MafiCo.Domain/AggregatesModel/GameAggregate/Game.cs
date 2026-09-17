@@ -114,8 +114,8 @@ public class Game : AggregateRoot {
         var losers = new List<PlayerInfo>();
 
         foreach (var player in _players.Values) {
-            var info = new PlayerInfo(player.Id, player.Role!.Value);
-            if (player.Role == winningSide) {
+            var info = new PlayerInfo(player.Id, player.Role!.Value, player.IsAlive);
+            if (player.Role == winningSide && player.IsAlive) {
                 winners.Add(info);
             }
             else {

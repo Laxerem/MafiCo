@@ -4,5 +4,6 @@ namespace MafiCo.Domain.DTOs;
 
 public record PlayerInfo(
     Guid Id,
-    Role Role
+    Role Role,
+    bool IsAlive
 );
