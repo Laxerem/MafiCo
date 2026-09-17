@@ -1,3 +1,4 @@
+using MafiCo.Application.Game.DTOs;
 using MafiCo.Application.Game.Notifications;
 using MafiCo.Application.Interfaces;
 using MafiCo.Domain.AggregatesModel.GameAggregate.Events;
@@ -22,16 +23,24 @@ public class GameFinishedHandler : INotificationHandler<GameFinishedEvent> {
         
         var playerIds = notification.Losers
             .Concat(notification.Winners)
-            .Select(x => x.Id)
-            .ToList();
-        
+            .Select(x => x.Id);
+
         var profiles = await _repository.GetRangeAsync(playerIds);
         var dictionary = profiles.ToDictionary(x => x.Id, x => x);
+
+        List<ResultPlayerInfo> winners = new(notification.Winners.Count);
+        List<ResultPlayerInfo> losers = new(notification.Losers.Count);
+
         foreach (var winner in notification.Winners) {
             dictionary[winner.Id].RegisterWin();
+            winners.Add(new ResultPlayerInfo(winner.Id, dictionary[winner.Id].Name, winner.Role, winner.IsAlive));
         }
-        
-        await gameSession.HandleAsync(new GameFinishedNotification(notification.Winners, notification.Losers));
+
+        foreach (var loser in notification.Losers) {
+            losers.Add(new ResultPlayerInfo(loser.Id, dictionary[loser.Id].Name, loser.Role, loser.IsAlive));
+        }
+
+        await gameSession.HandleAsync(new GameFinishedNotification(winners, losers));
         
         gameSession.Finish();
         _context.Reset();

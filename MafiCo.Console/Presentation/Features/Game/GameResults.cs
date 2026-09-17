@@ -1,14 +1,13 @@
 using MafiCo.Application.Game.DTOs;
 using MafiCo.Application.Game.Notifications;
-using MafiCo.Domain.DTOs;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 
 namespace MafiCo.Console.Presentation.Features.Game;
 
 /// <summary>
-/// UI-объект финального экрана: исход для игрока, составы победителей и
-/// проигравших с раскрытыми ролями.
+/// UI-объект финального экрана: исход для игрока и составы победителей и
+/// проигравших.
 /// </summary>
 public sealed class GameResults {
     private readonly Guid _selfId;
@@ -17,13 +16,11 @@ public sealed class GameResults {
         _selfId = selfId;
     }
 
-    public IRenderable Render(GameFinishedNotification result, IReadOnlyList<PublicPlayerInfo> players) {
-        var names = players.ToDictionary(player => player.Id, player => player.Name);
-
+    public IRenderable Render(GameFinishedNotification result) {
         return new Rows(
             BuildOutcome(result),
-            BuildSide("Победители", "green", result.Winners, names),
-            BuildSide("Проигравшие", "red", result.Losers, names));
+            BuildSide("Победители", "green", result.Winners),
+            BuildSide("Проигравшие", "red", result.Losers));
     }
 
     private IRenderable BuildOutcome(GameFinishedNotification result) {
@@ -39,25 +36,22 @@ public sealed class GameResults {
         return new Markup(text);
     }
 
-    private IRenderable BuildSide(
-        string header,
-        string color,
-        IReadOnlyList<PlayerInfo> side,
-        IReadOnlyDictionary<Guid, string> names) {
+    private IRenderable BuildSide(string header, string color, IReadOnlyList<ResultPlayerInfo> side) {
         IRenderable content = side.Count == 0
             ? new Markup("[grey]—[/]")
-            : new Rows(side.Select(player => FormatPlayer(player, names)));
+            : new Rows(side.Select(FormatPlayer));
 
         return new Panel(content)
             .Header($"[{color}]{header}[/]")
             .Expand();
     }
 
-    private Markup FormatPlayer(PlayerInfo player, IReadOnlyDictionary<Guid, string> names) {
+    private Markup FormatPlayer(ResultPlayerInfo player) {
         var role = player.Role.ToString();
-        var name = names.TryGetValue(player.Id, out var found) ? Markup.Escape(found) : "[grey]?[/]";
+        var name = Markup.Escape(player.Name);
         var self = player.Id == _selfId ? " [grey](вы)[/]" : string.Empty;
+        var status = player.IsAlive ? string.Empty : " [grey](погиб)[/]";
 
-        return new Markup($"[bold]{role}[/] — {name}{self}");
+        return new Markup($"[bold]{role}[/] — {name}{self}{status}");
     }
 }

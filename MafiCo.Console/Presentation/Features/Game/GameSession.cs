@@ -97,7 +97,7 @@ public sealed class GameSession {
     private async Task ShowResultsAsync(GameFinishedNotification result) {
         AnsiConsole.Clear();
         AnsiConsole.Write(new FigletText("MafiCo"));
-        AnsiConsole.Write(_results.Render(result, _playerList));
+        AnsiConsole.Write(_results.Render(result));
 
         await AnsiConsole.PromptAsync(
             new TextPrompt<string>("[grey]Нажмите Enter, чтобы вернуться в меню[/]").AllowEmpty());
