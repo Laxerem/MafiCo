@@ -7,6 +7,7 @@ using MafiCo.Application.Game.Mediator.Internal.Commands;
 using MafiCo.Application.Interfaces;
 using MafiCo.Application.Interfaces.Game;
 using MafiCo.Application.Interfaces.Stores;
+using MafiCo.Domain.AggregatesModel.BotAggregate;
 using MafiCo.Domain.AggregatesModel.GameAggregate;
 using MafiCo.Domain.AggregatesModel.ProfileAggregate;
 using MediatR;
@@ -16,17 +17,17 @@ namespace MafiCo.Application.Game.Mediator.Handlers;
 
 public class StartGameHandler : IRequestHandler<StartGameCommand, IPlayerSession> {
     private readonly IMediator _mediator;
-    private readonly IProfileRepository _profileRepository;
+    private readonly IBotRepository _botRepository;
     private readonly IGameRepository _gameRepository;
     private readonly GameContext _gameContext;
     private readonly IUserStore _store;
     private readonly IUnitOfWork _unitOfWork;
     
-    public StartGameHandler(IMediator mediator, GameContext gameContext, IProfileRepository profileRepository, IGameRepository gameRepository, 
+    public StartGameHandler(IMediator mediator, GameContext gameContext, IBotRepository botRepository, IGameRepository gameRepository, 
         IUserStore store, IUnitOfWork unitOfWork) {
         _mediator = mediator;
         _gameContext = gameContext;
-        _profileRepository = profileRepository;
+        _botRepository = botRepository;
         _gameRepository = gameRepository;
         _store = store;
         _unitOfWork = unitOfWork;
@@ -35,9 +36,9 @@ public class StartGameHandler : IRequestHandler<StartGameCommand, IPlayerSession
     public async Task<IPlayerSession> Handle(StartGameCommand request, CancellationToken cancellationToken) {
         var userId = _store.GetUserId();
         if (!userId.HasValue) throw new ApplicationException("UserId does not exist");
-        
-        var allProfiles = await _profileRepository.GetAllAsync();
-        var profileIds = allProfiles.Select(p => p.Id).ToHashSet();
+
+        var allBots = await _botRepository.GetAllAvailableAsync();
+        var profileIds = allBots.Select(p => p.Id).ToHashSet();
 
         var game = new GameAggregate(profileIds);
         game = _gameRepository.Add(game);
