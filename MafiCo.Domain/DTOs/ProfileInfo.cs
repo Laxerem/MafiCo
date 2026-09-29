@@ -1,6 +1,8 @@
+using MafiCo.Domain.AggregatesModel.ProfileAggregate;
+
 namespace MafiCo.Domain.DTOs;
 public record ProfileInfo(
-    Guid Id,
+    ProfileId Id,
     string Name,
     int VictoriesCount,
     int DefeatsCount

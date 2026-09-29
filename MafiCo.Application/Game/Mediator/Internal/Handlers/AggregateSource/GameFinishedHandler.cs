@@ -23,7 +23,7 @@ public class GameFinishedHandler : INotificationHandler<GameFinishedEvent> {
         
         var playerIds = notification.Losers
             .Concat(notification.Winners)
-            .Select(x => x.Id);
+            .Select(x => new ProfileId(x.Id.Id));
 
         var profiles = await _repository.GetRangeAsync(playerIds);
         var dictionary = profiles.ToDictionary(x => x.Id, x => x);
@@ -32,12 +32,14 @@ public class GameFinishedHandler : INotificationHandler<GameFinishedEvent> {
         List<ResultPlayerInfo> losers = new(notification.Losers.Count);
 
         foreach (var winner in notification.Winners) {
-            dictionary[winner.Id].RegisterWin();
-            winners.Add(new ResultPlayerInfo(winner.Id, dictionary[winner.Id].Name, winner.Role, winner.IsAlive));
+            var profileId = new ProfileId(winner.Id.Id);
+            dictionary[profileId].RegisterWin();
+            winners.Add(new ResultPlayerInfo(profileId, dictionary[profileId].Name, winner.Role, winner.IsAlive));
         }
 
         foreach (var loser in notification.Losers) {
-            losers.Add(new ResultPlayerInfo(loser.Id, dictionary[loser.Id].Name, loser.Role, loser.IsAlive));
+            var profileId = new ProfileId(loser.Id.Id);
+            losers.Add(new ResultPlayerInfo(profileId, dictionary[profileId].Name, loser.Role, loser.IsAlive));
         }
 
         await gameSession.HandleAsync(new GameFinishedNotification(winners, losers));

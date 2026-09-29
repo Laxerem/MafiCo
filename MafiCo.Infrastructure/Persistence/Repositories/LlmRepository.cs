@@ -18,7 +18,7 @@ public class LlmRepository : ILlmRepository {
         throw new NotImplementedException();
     }
 
-    public async Task<Llm?> GetAsync(Guid id) {
+    public async Task<Llm?> GetAsync(LlmId id) {
         return await _context.LlmBots.FindAsync(id);
     }
 
@@ -28,11 +28,11 @@ public class LlmRepository : ILlmRepository {
             .ToListAsync();
     }
 
-    public async Task<bool> ExistsAsync(Guid id) {
+    public async Task<bool> ExistsAsync(LlmId id) {
         return await _context.LlmBots.AnyAsync(x => x.Id == id);
     }
 
-    public async Task RemoveAsync(Guid id) {
+    public async Task RemoveAsync(LlmId id) {
         var model = await _context.LlmBots.FindAsync(id);
         if (model is not null) {
             _context.LlmBots.Remove(model);

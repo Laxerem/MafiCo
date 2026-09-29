@@ -1,5 +1,6 @@
-using MafiCo.Domain.AggregatesModel.GameAggregate;
+using MafiCo.Domain.AggregatesModel.GameAggregate.ValueObjects;
+using MafiCo.Domain.AggregatesModel.ProfileAggregate;
 
 namespace MafiCo.Application.Game.DTOs;
 
-public record PublicPlayerInfo(Guid Id, string Name, bool IsAlive);
+public record PublicPlayerInfo(PlayerId Id, string Name, bool IsAlive);

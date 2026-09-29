@@ -1,11 +1,13 @@
+using MafiCo.Domain.Interfaces;
+
 namespace MafiCo.Domain.SeedWork;
 
-public abstract class AggregateRoot : Entity {
+public abstract class AggregateRoot<T> : Entity<T>, IAggregateRoot {
     public List<IDomainEvent> Notifications { get; protected set; }
-    public AggregateRoot(Guid id) :  base(id) {
+    public AggregateRoot(T id) :  base(id) {
         Notifications = new List<IDomainEvent>();
     }
-    
+
     protected void AddNotification(IDomainEvent notification) {
         Notifications.Add(notification);
     }

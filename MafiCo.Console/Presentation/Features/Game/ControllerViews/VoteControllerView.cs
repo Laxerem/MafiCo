@@ -1,5 +1,7 @@
 using MafiCo.Application.Game.Controllers;
 using MafiCo.Application.Game.DTOs;
+using MafiCo.Domain.AggregatesModel.GameAggregate.ValueObjects;
+using MafiCo.Domain.AggregatesModel.ProfileAggregate;
 using Spectre.Console;
 
 namespace MafiCo.Console.Presentation.Features.Game.ControllerViews;
@@ -11,9 +13,9 @@ namespace MafiCo.Console.Presentation.Features.Game.ControllerViews;
 internal sealed class VoteControllerView : IControllerView {
     private readonly VoterController _controller;
     private readonly IReadOnlyList<PublicPlayerInfo> _players;
-    private readonly Guid _selfId;
+    private readonly PlayerId _selfId;
 
-    public VoteControllerView(VoterController controller, IReadOnlyList<PublicPlayerInfo> players, Guid selfId) {
+    public VoteControllerView(VoterController controller, IReadOnlyList<PublicPlayerInfo> players, PlayerId selfId) {
         _controller = controller;
         _players = players;
         _selfId = selfId;
@@ -39,5 +41,5 @@ internal sealed class VoteControllerView : IControllerView {
         await _controller.MakeVote(choice.TargetId);
     }
 
-    private sealed record VoteOption(string Label, Guid TargetId);
+    private sealed record VoteOption(string Label, PlayerId TargetId);
 }

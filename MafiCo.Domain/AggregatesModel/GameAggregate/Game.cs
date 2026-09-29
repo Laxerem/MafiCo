@@ -1,30 +1,31 @@
 using MafiCo.Domain.AggregatesModel.GameAggregate.Entities;
 using MafiCo.Domain.AggregatesModel.GameAggregate.Events;
 using MafiCo.Domain.AggregatesModel.GameAggregate.Items;
+using MafiCo.Domain.AggregatesModel.GameAggregate.ValueObjects;
 using MafiCo.Domain.DTOs;
 using MafiCo.Domain.SeedWork;
 
 namespace MafiCo.Domain.AggregatesModel.GameAggregate;
 
-public class Game : AggregateRoot {
+public sealed class Game : AggregateRoot<GameId> {
     public DateTime StartedAt { get; private set; }
     public DateTime? FinishedAt { get; private set; }
 
-    private readonly Dictionary<Guid, Player> _players;
+    private readonly Dictionary<PlayerId, Player> _players;
     private Voting? _voting;
     private GameStatus _status;
     public GamePhase Phase { get; private set; }
 
-    private Game() : base(Guid.NewGuid()) {
-        _players = new Dictionary<Guid, Player>();
+    private Game() : base(new GameId(Guid.NewGuid())) {
+        _players = new Dictionary<PlayerId, Player>();
     }
 
-    public Game(HashSet<Guid> playerIds) : base(Guid.NewGuid()) {
-        _players = playerIds.ToDictionary(id => id, id => new Player(id));
+    public Game(HashSet<Guid> playerIds) : base(new GameId(Guid.NewGuid())) {
+        _players = playerIds.ToDictionary(id => new PlayerId(id), id => new Player(new PlayerId(id)));
         _status = GameStatus.Setting;
     }
 
-    public void AssignRoles(int mafiaCount) {
+    public IEnumerable<PlayerInfo> AssignRoles(int mafiaCount) {
         if (_status != GameStatus.Setting) {
             throw new DomainException("Roles are already assigned");
         }
@@ -46,9 +47,11 @@ public class Game : AggregateRoot {
         Phase = GamePhase.Day;
         _voting = new Voting();
         StartedAt = DateTime.UtcNow;
+
+        return _players.Values.ToInfo();
     }
 
-    public void MakeVote(Guid playerId, Guid targetId) {
+    public void MakeVote(PlayerId playerId, PlayerId targetId) {
         EnsureRunning();
         // if (Phase != GamePhase.Day) {
         //     throw new DomainException("Voting is not the current phase");
@@ -59,41 +62,40 @@ public class Game : AggregateRoot {
         _voting!.AddVote(playerId, targetId);
     }
 
-    public void NextPhase() {
+    public IEnumerable<PlayerId> NextPhase() {
         if (_status == GameStatus.Finished) {
             throw new DomainException("Game has ended");
         }
         EnsureRunning();
-        ResolveVoting();
-        if (TryFinish()) return;
-        
+        _voting = new Voting();
+
         if (Phase == GamePhase.Day) {
             Phase = GamePhase.Night;
+            return _players.Values
+                .Where(x => x.Role is Role.Mafia)
+                .Select(x => x.Id);
         }
         else {
             Phase = GamePhase.Day;
+            return _players.Values.Select(x => x.Id);
         }
-        _voting = new Voting();
     }
+    public IEnumerable<PlayerId> GetAllPlayers() => _players.Keys;
 
-    public Role CheckRole(Guid playerId) {
-        if (_players.TryGetValue(playerId, out var player)) {
-            return player.Role ?? throw new DomainException("Player role is not assigned");
-        }
+    /// <summary>
+    /// Подводит итоги голосования и завершает игру, если победитель определился.
+    /// </summary>
+    /// <returns>Id выбывшего игрока или null, если никто не выбыл.</returns>
+    public PlayerId? ResolveVoting() {
+        EnsureRunning();
 
-        throw new DomainException("Player doesn't exist");
-    }
-
-    public IReadOnlyCollection<Guid> GetAllPlayers() => _players.Keys;
-
-    private void ResolveVoting() {
         var targetId = _voting!.FinishAndGetResult();
-        if (targetId is null) return;
+        if (targetId is not null) {
+            _players[targetId.Value].Die();
+        }
 
-        var victim = _players[targetId.Value];
-        victim.Kill();
-
-        AddNotification(new PlayerKilledDomainEvent(victim.Id, victim.Role!.Value));
+        TryFinish();
+        return targetId;
     }
 
     private bool TryFinish() {
@@ -123,7 +125,8 @@ public class Game : AggregateRoot {
             }
         }
 
-        AddNotification(new GameFinishedEvent(winners, losers));
+        var audience = new Audience(_players.Values.Select(x => x.Id));
+        AddNotification(new GameFinishedEvent(winners, losers, audience));
 
         _players.Clear();
         _voting = null;
@@ -137,5 +140,5 @@ public class Game : AggregateRoot {
         }
     }
 
-    public bool IsAlive(Guid id) => _players.TryGetValue(id, out var player) && player.IsAlive;
+    public bool IsAlive(PlayerId id) => _players.TryGetValue(id, out var player) && player.IsAlive;
 }

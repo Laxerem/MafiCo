@@ -1,19 +1,22 @@
+using MafiCo.Domain.AggregatesModel.BotAggregate.ValueObjects;
+using MafiCo.Domain.AggregatesModel.LlmAggregate;
+using MafiCo.Domain.AggregatesModel.ProfileAggregate;
 using MafiCo.Domain.SeedWork;
 
 namespace MafiCo.Domain.AggregatesModel.BotAggregate;
 
-public class Bot : AggregateRoot {
-    public Guid ProfileId { get; private set; }
-    public Guid? LlmId { get; private set; }
+public class Bot : AggregateRoot<BotId> {
+    public ProfileId ProfileId { get; private set; }
+    public LlmId? LlmId { get; private set; }
 
-    private Bot() : base(Guid.NewGuid()) {}
+    private Bot() : base(new BotId(Guid.NewGuid())) {}
 
-    public Bot(Guid profileId, Guid? llmId) : base(Guid.NewGuid()) {
+    public Bot(ProfileId profileId, LlmId? llmId) : base(new BotId(Guid.NewGuid())) {
         ProfileId = profileId;
         LlmId = llmId;
     }
 
-    public void ChangeLlm(Guid llmId) {
+    public void ChangeLlm(LlmId llmId) {
         LlmId = llmId;
     }
 }

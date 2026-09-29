@@ -18,15 +18,15 @@ public class ProfileRepository : IProfileRepository {
         _context.Entry(profile).State = EntityState.Modified;
     }
 
-    public bool Exists(Guid id) {
+    public bool Exists(ProfileId id) {
         return _context.Profiles.Any(e => e.Id == id);
     }
 
-    public async Task<Profile?> GetAsync(Guid id) {
+    public async Task<Profile?> GetAsync(ProfileId id) {
         return await _context.Profiles.FindAsync(id);
     }
 
-    public async Task<List<Profile>> GetRangeAsync(IEnumerable<Guid> playerIds) {
+    public async Task<List<Profile>> GetRangeAsync(IEnumerable<ProfileId> playerIds) {
         return await _context.Profiles.Where(p => playerIds.Contains(p.Id)).ToListAsync();
     }
 

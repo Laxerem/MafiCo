@@ -3,14 +3,14 @@ using MafiCo.Domain.SeedWork;
 
 namespace MafiCo.Domain.AggregatesModel.ProfileAggregate;
 
-public class Profile : AggregateRoot {
+public class Profile : AggregateRoot<ProfileId> {
     public string Name { get; private set; }
     public int VictoriesCount { get; private set; }
     public int DefeatsCount { get; private set; }
 
-    private Profile() : base(Guid.Empty) {}
+    private Profile() : base(new ProfileId(Guid.Empty)) {}
 
-    private Profile(string name) : base(Guid.NewGuid()) {
+    private Profile(string name) : base(new ProfileId(Guid.NewGuid())) {
         Name = name;
     }
 

@@ -40,7 +40,7 @@ public class GetBotsHandler : IRequestHandler<GetBotsCommand, List<BotDto>> {
                     ? LlmDto.FromEntity(found)
                     : null;
 
-                return new BotDto(bot.Id, profile.ToProfileInfo(), model);
+                return new BotDto(bot.Id, profile.ToInfo(), model);
             })
             .ToList();
     }

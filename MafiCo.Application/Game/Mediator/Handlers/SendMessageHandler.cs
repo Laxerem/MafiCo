@@ -1,4 +1,4 @@
-using MafiCo.Application.Game.Commands;
+using MafiCo.Application.Game.Mediator.Commands;
 using MafiCo.Application.Game.Notifications;
 using MafiCo.Domain.AggregatesModel.ProfileAggregate;
 using MediatR;
@@ -15,7 +15,7 @@ public class SendMessageHandler : IRequestHandler<SendMessageCommand> {
     }
     
     public async Task Handle(SendMessageCommand request, CancellationToken cancellationToken) {
-        var userProfile = await _repository.GetAsync(request.PlayerId) ?? throw new NullReferenceException("Player profile not found");
+        var userProfile = await _repository.GetAsync(new ProfileId(request.PlayerId.Id)) ?? throw new NullReferenceException("Player profile not found");
         await _context.Session!.HandleAsync(new PlayerMessageNotification(userProfile.Name, request.Message));
     }
 }

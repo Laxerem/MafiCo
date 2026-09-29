@@ -1,3 +1,4 @@
+using MafiCo.Domain.AggregatesModel.ProfileAggregate;
 using MediatR;
 
 namespace MafiCo.Application.Interfaces;

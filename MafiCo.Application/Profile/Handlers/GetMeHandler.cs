@@ -23,6 +23,6 @@ public class GetMeHandler : IRequestHandler<GetMeCommand, ProfileInfo> {
         var profile = await _repository.GetAsync(userId)
             ?? throw new ProfileException("Profile not found");
 
-        return profile.ToProfileInfo();
+        return profile.ToInfo();
     }
 }

@@ -1,17 +1,18 @@
+using MafiCo.Domain.AggregatesModel.GameAggregate.ValueObjects;
 using MafiCo.Domain.SeedWork;
 
 namespace MafiCo.Domain.AggregatesModel.GameAggregate;
 
 public class Voting {
     private bool _isActive;
-    private readonly Dictionary<Guid, Guid> _votes;
+    private readonly Dictionary<PlayerId, PlayerId> _votes;
 
     public Voting() {
-        _votes = new Dictionary<Guid, Guid>();
+        _votes = new Dictionary<PlayerId, PlayerId>();
         _isActive = true;
     }
 
-    public void AddVote(Guid voterId, Guid targetId) {
+    public void AddVote(PlayerId voterId, PlayerId targetId) {
         if (!_isActive) throw new DomainException("Voting is not active");
         if (voterId == targetId) throw new DomainException("Voter cannot vote for themselves");
         if (_votes.ContainsKey(voterId)) throw new DomainException($"Voter #{voterId} already voted");
@@ -19,12 +20,12 @@ public class Voting {
         _votes.Add(voterId, targetId);
     }
 
-    public void RemoveVote(Guid voterId) {
+    public void RemoveVote(PlayerId voterId) {
         if (!_isActive) throw new DomainException("Voting is not active");
         if (!_votes.Remove(voterId)) throw new DomainException($"Voter #{voterId} has not voted yet");
     }
 
-    public Guid? FinishAndGetResult() {
+    public PlayerId? FinishAndGetResult() {
         if (!_isActive) throw new DomainException("Voting is not active");
         _isActive = false;
 

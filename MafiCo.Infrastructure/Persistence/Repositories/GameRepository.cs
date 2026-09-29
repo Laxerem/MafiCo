@@ -1,4 +1,5 @@
 using MafiCo.Domain.AggregatesModel.GameAggregate;
+using MafiCo.Domain.AggregatesModel.GameAggregate.ValueObjects;
 
 namespace MafiCo.Infrastructure.Persistence.Repositories;
 
@@ -13,7 +14,7 @@ public class GameRepository : IGameRepository {
         return _context.Games.Add(game).Entity!;
     }
 
-    public async Task<Game?> GetAsync(Guid id) {
+    public async Task<Game?> GetAsync(GameId id) {
         return await _context.Games.FindAsync(id);
     }
 }

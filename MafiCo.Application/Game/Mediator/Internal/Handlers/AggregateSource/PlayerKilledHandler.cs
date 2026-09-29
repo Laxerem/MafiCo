@@ -17,8 +17,9 @@ public class PlayerKilledHandler : INotificationHandler<PlayerKilledDomainEvent>
     
     public async Task Handle(PlayerKilledDomainEvent evt, CancellationToken cancellationToken) {
         var gameSession = _context.Session!;
-        var playerProfile = await _repository.GetAsync(evt.PlayerId);
-        if (playerProfile is null) throw new NullReferenceException($"Player {evt.PlayerId} doesn't exist");
+        var profileId = new ProfileId(evt.Id.Id);
+        var playerProfile = await _repository.GetAsync(profileId);
+        if (playerProfile is null) throw new NullReferenceException($"Player {profileId} doesn't exist");
         
         await gameSession.HandleAsync(new PlayerKilledNotification(playerProfile.Name));
     }

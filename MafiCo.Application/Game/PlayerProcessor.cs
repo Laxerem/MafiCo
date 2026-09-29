@@ -1,6 +1,8 @@
 using MafiCo.Application.Interfaces;
 using MafiCo.Application.Interfaces.Game;
 using MafiCo.Application.Interfaces.Notifications;
+using MafiCo.Domain.AggregatesModel.GameAggregate.ValueObjects;
+using MafiCo.Domain.AggregatesModel.ProfileAggregate;
 
 namespace MafiCo.Application.Game;
 
@@ -8,12 +10,12 @@ public class PlayerProcessor : IProcessor<IGameNotification> {
     private readonly PlayerSession _playerSession;
     private readonly INotifySource _notifySource;
     private bool _isRunning;
-    
+
     public Guid Id { get; }
     public IPlayerSession Session => _playerSession;
 
-    public PlayerProcessor(Guid id, INotifySource notifyNotifySource) {
-        Id = id;
+    public PlayerProcessor(PlayerId id, INotifySource notifyNotifySource) {
+        Id = id.Id;
         _playerSession = new PlayerSession();
         _notifySource = notifyNotifySource;
     }

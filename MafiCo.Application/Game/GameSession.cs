@@ -3,6 +3,8 @@ using MafiCo.Application.Game.Mediator.Internal.Commands;
 using MafiCo.Application.Interfaces;
 using MafiCo.Application.Interfaces.Game;
 using MafiCo.Application.Interfaces.Notifications;
+using MafiCo.Domain.AggregatesModel.GameAggregate.ValueObjects;
+using MafiCo.Domain.AggregatesModel.ProfileAggregate;
 using MediatR;
 
 namespace MafiCo.Application.Game;
@@ -11,34 +13,31 @@ using GameEntity = MafiCo.Domain.AggregatesModel.GameAggregate.Game;
 public class GameSession : INotifyConsumer, INotifySource {
     public GameEntity Game { get; private set; }
     public event Func<IGameNotification, Task> OnNotification;
-    
+
     private bool _isFinished;
-    private Dictionary<Guid, PlayerProcessor> _processors;
+    private Dictionary<PlayerId, PlayerProcessor> _processors;
 
     public GameSession(GameEntity game) {
         Game = game;
-        _processors = new Dictionary<Guid, PlayerProcessor>();
+        _processors = new Dictionary<PlayerId, PlayerProcessor>();
         _isFinished = false;
     }
 
     public async Task StartAsync(int mafiaCount, IMediator mediator) {
         if (_isFinished) throw new InvalidOperationException("Game session is finished");
-        
+
         foreach (var playerId in Game.GetAllPlayers()) {
             var processor = await mediator.Send(new CreatePlayerCommand(playerId));
             _processors.Add(playerId, processor);
-            processor.Run();
         }
-        
-        var worker = new GameWorker(Game, mafiaCount, new GamePublisher(mediator));
-        await worker.RunAsync();
+        var worker = new GameWorker(Game, mafiaCount, mediator);
+        _ = Task.Run(() => worker.RunAsync(Finish));
     }
 
-    public IEnumerable<IProcessor<IGameNotification>> GetProcessors() {
-        return _processors.Values;
-    }
+    public IEnumerable<PlayerProcessor> GetProcessors() => _processors.Values;
+    public PlayerProcessor GetProcessor(PlayerId playerId) => _processors[playerId];
 
-    public IPlayerSession GetPlayerSession(Guid playerId) {
+    public IPlayerSession GetPlayerSession(PlayerId playerId) {
         return _processors[playerId].Session;
     }
 

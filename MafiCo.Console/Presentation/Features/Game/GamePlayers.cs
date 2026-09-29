@@ -1,4 +1,6 @@
 using MafiCo.Application.Game.DTOs;
+using MafiCo.Domain.AggregatesModel.GameAggregate.ValueObjects;
+using MafiCo.Domain.AggregatesModel.ProfileAggregate;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 
@@ -8,10 +10,10 @@ namespace MafiCo.Console.Presentation.Features.Game;
 /// UI-объект списка игроков: кто участвует в матче и кто ещё жив.
 /// </summary>
 public sealed class GamePlayers {
-    private readonly Guid _selfId;
+    private readonly PlayerId _selfId;
     private IReadOnlyList<PublicPlayerInfo> _players = [];
 
-    public GamePlayers(Guid selfId) {
+    public GamePlayers(PlayerId selfId) {
         _selfId = selfId;
     }
 

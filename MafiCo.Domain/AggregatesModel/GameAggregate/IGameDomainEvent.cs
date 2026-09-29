@@ -1,6 +1,8 @@
+using MafiCo.Domain.AggregatesModel.GameAggregate.ValueObjects;
 using MafiCo.Domain.SeedWork;
-using MediatR;
 
 namespace MafiCo.Domain.AggregatesModel.GameAggregate;
 
-public interface IGameDomainEvent : IDomainEvent {}
+public interface IGameDomainEvent : IDomainEvent {
+    Audience Audience { get; }
+}

@@ -1,4 +1,6 @@
 using MafiCo.Domain.AggregatesModel.BotAggregate;
+using MafiCo.Domain.AggregatesModel.BotAggregate.ValueObjects;
+using MafiCo.Domain.AggregatesModel.ProfileAggregate;
 using Microsoft.EntityFrameworkCore;
 
 namespace MafiCo.Infrastructure.Persistence.Repositories;
@@ -15,7 +17,7 @@ public class BotRepository : IBotRepository {
         return Task.CompletedTask;
     }
 
-    public async Task<Bot?> GetAsync(Guid id) {
+    public async Task<Bot?> GetAsync(BotId id) {
         return await _context.Bots.FindAsync(id);
     }
 
@@ -32,15 +34,15 @@ public class BotRepository : IBotRepository {
             .ToListAsync();
     }
 
-    public async Task<bool> ExistsByProfileIdAsync(Guid profileId) {
+    public async Task<bool> ExistsByProfileIdAsync(ProfileId profileId) {
         return await _context.Bots.AnyAsync(x => x.ProfileId == profileId);
     }
 
-    public async Task<bool> ExistsAsync(Guid id) {
+    public async Task<bool> ExistsAsync(BotId id) {
         return await _context.Bots.AnyAsync(x => x.Id == id);
     }
 
-    public async Task RemoveAsync(Guid id) {
+    public async Task RemoveAsync(BotId id) {
         var bot = await _context.Bots.FindAsync(id);
         if (bot is not null) {
             _context.Bots.Remove(bot);

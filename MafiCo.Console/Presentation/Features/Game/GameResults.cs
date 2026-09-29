@@ -1,5 +1,6 @@
 using MafiCo.Application.Game.DTOs;
 using MafiCo.Application.Game.Notifications;
+using MafiCo.Domain.AggregatesModel.ProfileAggregate;
 using Spectre.Console;
 using Spectre.Console.Rendering;
 
@@ -10,9 +11,9 @@ namespace MafiCo.Console.Presentation.Features.Game;
 /// проигравших.
 /// </summary>
 public sealed class GameResults {
-    private readonly Guid _selfId;
+    private readonly ProfileId _selfId;
 
-    public GameResults(Guid selfId) {
+    public GameResults(ProfileId selfId) {
         _selfId = selfId;
     }
 

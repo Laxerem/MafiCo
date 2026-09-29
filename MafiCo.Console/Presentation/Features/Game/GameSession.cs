@@ -1,9 +1,10 @@
-using MafiCo.Application.Game.Commands;
 using MafiCo.Application.Game.DTOs;
 using MafiCo.Application.Game.Mediator.Commands;
 using MafiCo.Application.Game.Notifications;
 using MafiCo.Application.Interfaces.Game;
 using MafiCo.Console.Presentation.Features.Game.ControllerViews;
+using MafiCo.Domain.AggregatesModel.GameAggregate.ValueObjects;
+using MafiCo.Domain.AggregatesModel.ProfileAggregate;
 using MafiCo.Domain.DTOs;
 using MediatR;
 using Spectre.Console;
@@ -19,7 +20,7 @@ namespace MafiCo.Console.Presentation.Features.Game;
 public sealed class GameSession {
     private readonly IPlayerSession _session;
     private readonly ISender _mediator;
-    private readonly Guid _selfId;
+    private readonly ProfileId _selfId;
     private readonly GameChat _chat;
     private readonly GamePlayers _players;
     private readonly GameResults _results;
@@ -32,7 +33,7 @@ public sealed class GameSession {
         _mediator = mediator;
         _selfId = me.Id;
         _chat = new GameChat(me.Name);
-        _players = new GamePlayers(me.Id);
+        _players = new GamePlayers(new PlayerId(me.Id.Id));
         _results = new GameResults(me.Id);
     }
 

@@ -3,6 +3,8 @@ using MafiCo.Application.Game.Controllers;
 using MafiCo.Application.Game.DTOs;
 using MafiCo.Application.Interfaces;
 using MafiCo.Console.Presentation.Features.Game.ControllerViews;
+using MafiCo.Domain.AggregatesModel.GameAggregate.ValueObjects;
+using MafiCo.Domain.AggregatesModel.ProfileAggregate;
 
 namespace MafiCo.Console.Presentation.Features.Game;
 
@@ -14,9 +16,9 @@ internal static class ControllerViewFactory {
     public static IControllerView? Create(
         IPlayerController? controller,
         IReadOnlyList<PublicPlayerInfo> players,
-        Guid selfId) => controller switch {
+        ProfileId selfId) => controller switch {
         DefaultController defaultController => new ChatControllerView(defaultController),
-        VoterController voterController => new VoteControllerView(voterController, players, selfId),
+        VoterController voterController => new VoteControllerView(voterController, players, new PlayerId(selfId.Id)),
         _ => null,
     };
 }

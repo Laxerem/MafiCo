@@ -18,9 +18,8 @@ internal class CreatePlayerHandler : IRequestHandler<CreatePlayerCommand, Player
     }
     
     public Task<PlayerProcessor> Handle(CreatePlayerCommand request, CancellationToken cancellationToken) {
-        var profileId = request.ProfileId;
-        if (!_profileRepository.Exists(profileId)) {
-            throw new ApplicationException($"Profile with id {profileId} does not exist");
+        if (!_profileRepository.Exists(new ProfileId(request.PlayerId.Id))) {
+            throw new ApplicationException($"Profile with id {request.PlayerId} does not exist");
         }
         // bool isBot = await _botRepository.ExistsByProfileIdAsync(profileId);
         // if (isBot) {
@@ -28,6 +27,6 @@ internal class CreatePlayerHandler : IRequestHandler<CreatePlayerCommand, Player
         // }
         // return new UserProcessor();
         
-        return Task.FromResult(new PlayerProcessor(profileId, _context.Session!));
+        return Task.FromResult(new PlayerProcessor(request.PlayerId, _context.Session!));
     }
 }

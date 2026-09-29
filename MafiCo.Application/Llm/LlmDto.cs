@@ -1,7 +1,9 @@
+using MafiCo.Domain.AggregatesModel.LlmAggregate;
+
 namespace MafiCo.Application.Llm;
 
 public record LlmDto(
-    Guid Id,
+    LlmId Id,
     string ModelName,
     string Url
 ) {

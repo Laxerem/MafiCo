@@ -1,9 +1,10 @@
 using MafiCo.Domain.AggregatesModel.GameAggregate;
+using MafiCo.Domain.AggregatesModel.GameAggregate.ValueObjects;
 
 namespace MafiCo.Domain.DTOs;
 
 public record PlayerInfo(
-    Guid Id,
+    PlayerId Id,
     Role Role,
     bool IsAlive
 );
