@@ -1,4 +1,5 @@
 using MafiCo.Application.Game.Notifications;
+using MafiCo.Application.Game.Notifications.Players;
 using MediatR;
 
 namespace MafiCo.Console.Presentation.Features.Game;
@@ -14,6 +15,10 @@ public static class NotificationBuilder {
                 return $"{notify.PlayerName} голосует против {notify.TargetName}";
             case PlayerKilledNotification notify:
                 return $"{notify.PlayerName} был убит";
+            case PlayerExcludedNotification notify:
+                return notify.PlayerName is null
+                    ? "Голосование завершилось без исключения — никто не исключён"
+                    : $"{notify.PlayerName} исключён по итогам голосования";
         }
         throw new NotImplementedException($"Builder for notification {notification.GetType()} doesn't exists");
     }

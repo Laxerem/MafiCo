@@ -1,32 +1,42 @@
 using MafiCo.Application.Game.Mediator.Internal.Events;
-using MafiCo.Application.Interfaces.Mediator.Access;
+using MediatR;
+using Serilog;
+using ILogger = Serilog.ILogger;
 using GameAggregate = MafiCo.Domain.AggregatesModel.GameAggregate.Game;
 
 namespace MafiCo.Application.Game;
 
 public class GameWorker {
-    private readonly IGamePublisher _publisher;
+    private readonly IMediator _mediator;
     private readonly GameAggregate _game;
     private int _mafiaCount;
-    
-    public GameWorker(GameAggregate game, int mafiaCount, IGamePublisher publisher) {
-        _publisher = publisher;
-        _mafiaCount = mafiaCount;
+    private readonly ILogger _logger = Log.ForContext<GameWorker>();
+
+    public GameWorker(GameAggregate game, int mafiaCount, IMediator mediator) {
         _game = game;
+        _mafiaCount = mafiaCount;
+        _mediator = mediator;
     }
 
-    public async Task RunAsync() {
-        await Task.Run(async () => Work(_mafiaCount));
-    }
+    public async Task RunAsync(Action? onFailure = null) {
+        try {
+            var assignedPlayers = _game.AssignRoles(_mafiaCount);
+            await _mediator.Publish(new RoleAssignedEvent(assignedPlayers));
 
-    private async Task Work(int mafiaCount) {
-        _game.AssignRoles(mafiaCount);
-        await _publisher.Publish(new RoleAssignedEvent());
-        await _publisher.Publish(new PhaseChangedEvent(_game.Phase));
-
-        while (true) {
-            _game.NextPhase();
-            await _publisher.Publish(new PhaseChangedEvent(_game.Phase));
+            while (true) {
+                await _mediator.DispatchGameEvents(_game);
+                
+                var activePlayers = _game.NextPhase();
+                await _mediator.Publish(new PhaseChangedEvent(_game.Phase, activePlayers));
+                await Task.Delay(4000);
+                
+                var victim = _game.ResolveVoting();
+                await _mediator.Publish(new VotingFinishedEvent(victim));
+            }
+        }
+        catch (Exception ex) {
+            _logger.Error(ex, "Game worker loop failed");
+            onFailure?.Invoke();
         }
     }
 }
